@@ -50,4 +50,14 @@ export const verify = async (token: string, code: string) => {
     }
 }
 
+export const getUserById = async (token: string) => {
+    try {
+        const res = await api.post(apiEndpoins.getUserById(token))
+        return res
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
 export default api

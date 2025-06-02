@@ -1,5 +1,6 @@
 "use client";
 
+import { getUserById } from "@/app/api/service/api";
 import axios from "axios";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -20,18 +21,21 @@ const VerifyPage = () => {
     }
   }, []);
 
-  console.log(token);
-
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
+
+    getUserById(token)
 
     if (!token || !code) {
       setMessage("Token yoki kod kiritilmagan!");
       setLoading(false);
       return;
     }
+
+    console.log(localStorage.getItem("token"));
+
 
     try {
       const res = await axios.post("http://localhost:3000/auth/verify", {
@@ -47,6 +51,8 @@ const VerifyPage = () => {
       setLoading(false);
     }
   };
+  console.log(token);
+
 
   return (
     <div className="container py-5 text-white max-w-md mx-auto">
@@ -54,17 +60,30 @@ const VerifyPage = () => {
         <ArrowLeft size={32} strokeWidth={1.5} className="mb-6" />
       </Link>
 
-      <h1 className="text-3xl text-center mb-6 font-semibold">Emailni Tasdiqlash</h1>
+      <h1 className="text-3xl text-center mb-6 font-semibold">Profilni To'ldirish</h1>
 
       <form
         onSubmit={handleVerify}
         className="flex flex-col items-center gap-4"
       >
-        <input type="text" value={token} onChange={(e) => { setToken(e.target.value) }} />
         <input
           onChange={(e) => setCode(e.target.value)}
           value={code}
-          placeholder="Tasdiqlash kodini kiriting"
+          placeholder="Isim"
+          className="w-full h-12 px-4 rounded-md bg-[#1e2916] border border-white/20 text-white text-lg"
+          type="text"
+        />
+        <input
+          onChange={(e) => setCode(e.target.value)}
+          value={code}
+          placeholder="Familya"
+          className="w-full h-12 px-4 rounded-md bg-[#1e2916] border border-white/20 text-white text-lg"
+          type="text"
+        />
+        <input
+          onChange={(e) => setCode(e.target.value)}
+          value={code}
+          placeholder="Telefon Raqam"
           className="w-full h-12 px-4 rounded-md bg-[#1e2916] border border-white/20 text-white text-lg"
           type="text"
         />

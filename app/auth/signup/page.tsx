@@ -4,17 +4,13 @@ import { ArrowLeft, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import Image from 'next/image';
 import edu7 from '@/app/images/7edu white logo.png'
 import api, { register } from '@/app/api/service/api';
 
 const SignupPage = () => {
     const [userData, setUserData] = useState({
-        name: '',
-        surname: '',
         email: '',
-        phonenumber: "",
         password: ''
     })
     const [isError, setError] = useState(false)
@@ -22,22 +18,21 @@ const SignupPage = () => {
     const router = useRouter();
 
     const handleSignup = async () => {
+        router.push('verify')
         try {
             const response = await register(userData).then(e => {
-                console.log(e);
-                localStorage.setItem('token', e.data.access_token)
+                console.log(e.token);
+                localStorage.setItem('token', e.token)
             })
             setError(false)
-            console.log(userData);
-
-            router.push('verify')
 
         } catch (error) {
             setError(true)
-            console.log('bu hisob mavjud')
+            console.log(error)
         }
     };
 
+    
     return (
         <section className="container pt-5">
             <Link href="/">
@@ -50,7 +45,7 @@ const SignupPage = () => {
 
                 {isError && <h1>Email Allaqachon Ro'yaxtdan O'tib Bo'lgan</h1>}
                 <form className="space-y-5">
-                    <input
+                    {/* <input
                         type="text"
                         name="name"
                         value={userData.name}
@@ -67,7 +62,7 @@ const SignupPage = () => {
                         placeholder="Familya"
                         className="autofill:bg-white/10 w-full h-14 border rounded-md border-white/20 text-white px-3 bg-white/10"
                         required
-                    />
+                    /> */}
 
                     <input
                         type="email"
@@ -79,7 +74,7 @@ const SignupPage = () => {
                         required
                     />
 
-                    <input
+                    {/* <input
                         type="tel"
                         name="phone number"
                         value={userData.phonenumber}
@@ -87,7 +82,7 @@ const SignupPage = () => {
                         placeholder="telefon raqam"
                         className="autofill:bg-white/10 w-full h-14 border rounded-md border-white/20 text-white px-3 bg-white/10"
                         required
-                    />
+                    /> */}
 
                     <input
                         type="password"

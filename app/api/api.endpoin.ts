@@ -1,3 +1,4 @@
+
 const main_url = {
   auth: "auth",
   course: "courses",
@@ -34,6 +35,7 @@ const apiEndpoins = {
 
   // user
   getUsers: `${main_url.user}`,
+  getUserById: (token: string) => `${main_url.user}`,
   getOneUser: (id: string) => `${main_url.user}/${id}`,
   deleteUser: (id: number) => `${main_url.user}/delete/${id}`,
   changeUserDetails: (id: number) => `${main_url.user}/update/${id}`,
