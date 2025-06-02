@@ -2,7 +2,6 @@
 
 import { CircleArrowLeft } from "lucide-react";
 import Image from "next/image";
-import { userData } from "@/app/api/api.path";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";

@@ -12,7 +12,6 @@ const Home = () => {
 
 
         <div className="space-y-6">
-          {/* O‘quvchi */}
           <Link
             href="/auth/login"
             className="w-full border border-white/20 rounded-xl shadow-md p-5 flex items-center gap-4 hover:shadow-lg transition duration-200 group bg-white/5 hover:bg-white/10 backdrop-blur-sm"
@@ -24,14 +23,13 @@ const Home = () => {
               O‘quvchi sifatida kirish
             </span>
           </Link>
-          
-          {/* Mehmon */}
+
           <Link
             href="/auth/signup"
             className="w-full border border-white/20 rounded-xl shadow-md p-5 flex items-center gap-4 hover:shadow-lg transition duration-200 group bg-white/5 hover:bg-white/10 backdrop-blur-sm"
           >
             <div className="bg-[#2097401A] p-3 rounded-full text-[#00C835]">
-              <School2 size={30} strokeWidth={1.5}/>
+              <School2 size={30} strokeWidth={1.5} />
             </div>
             <span className="text-xl font-semibold text-white">
               Mehmon sifatida kirish

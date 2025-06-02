@@ -7,12 +7,14 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import Image from 'next/image';
 import edu7 from '@/app/images/7edu white logo.png'
+import api, { register } from '@/app/api/service/api';
 
 const SignupPage = () => {
     const [userData, setUserData] = useState({
         name: '',
         surname: '',
         email: '',
+        phonenumber: "",
         password: ''
     })
     const [isError, setError] = useState(false)
@@ -21,14 +23,15 @@ const SignupPage = () => {
 
     const handleSignup = async () => {
         try {
-            const response = await axios.post(`http://localhost:3000/auth/register`, userData).then((e) => {
+            const response = await register(userData).then(e => {
+                console.log(e);
                 localStorage.setItem('token', e.data.access_token)
-                console.log(e.data);
-                setError(false)
-                router.push('verify')
             })
+            setError(false)
+            console.log(userData);
 
-            // localStorage.setItem('userId', 'response.data.customId')
+            router.push('verify')
+
         } catch (error) {
             setError(true)
             console.log('bu hisob mavjud')
@@ -72,6 +75,16 @@ const SignupPage = () => {
                         value={userData.email}
                         onChange={(e) => setUserData({ ...userData, email: e.target.value })}
                         placeholder="Email"
+                        className="autofill:bg-white/10 w-full h-14 border rounded-md border-white/20 text-white px-3 bg-white/10"
+                        required
+                    />
+
+                    <input
+                        type="tel"
+                        name="phone number"
+                        value={userData.phonenumber}
+                        onChange={(e) => setUserData({ ...userData, phonenumber: String(e.target.value) })}
+                        placeholder="telefon raqam"
                         className="autofill:bg-white/10 w-full h-14 border rounded-md border-white/20 text-white px-3 bg-white/10"
                         required
                     />
