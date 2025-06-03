@@ -41,9 +41,18 @@ export const register = async (data: Object) => {
     }
 }
 
-export const verify = async (token: string, code: string) => {
+export const verify = async (email: string, code: string) => {
     try {
-        const res = await api.post(apiEndpoins.verifyCode, { token, code })
+        const res = await api.post(apiEndpoins.verifyCode, { email, code })
+        return res
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const decodeToken = async (token: string) => {
+    try {
+        const res = await api.post(apiEndpoins.decodeToken, token)
         return res
     } catch (error) {
         console.log(error);

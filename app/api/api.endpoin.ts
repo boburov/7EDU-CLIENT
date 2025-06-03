@@ -15,6 +15,7 @@ const apiEndpoins = {
   registerUser: `${main_url.auth}/register`,
   verifyCode: `${main_url.auth}/verify`,
   loginUser: `${main_url.auth}/login`,
+  decodeToken: `${main_url.auth}/verify-token`,
 
   // create course
   createCategor: `${main_url.course}/new-category`,

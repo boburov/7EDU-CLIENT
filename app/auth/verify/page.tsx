@@ -9,38 +9,39 @@ import { useEffect, useState } from "react";
 const VerifyPage = () => {
   const router = useRouter()
   const [code, setCode] = useState("");
-  const [token, setToken] = useState("");
+  const [email, setToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const savedToken = localStorage.getItem("token");
+      const savedToken = localStorage.getItem("userEmail");
       if (savedToken) setToken(savedToken);
     }
   }, []);
 
-  console.log(token);
+  console.log(email);
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
 
-    if (!token || !code) {
-      setMessage("Token yoki kod kiritilmagan!");
+    if (!email || !code) {
+      setMessage("Kod kiritilmagan yoki Xato!");
       setLoading(false);
       return;
     }
 
     try {
       const res = await axios.post("http://localhost:3000/auth/verify", {
-        token,
+        email,
         code,
       });
 
       setMessage(res.data.msg || "Email muvaffaqiyatli tasdiqlandi");
-      router.push('complate')
+      
+      router.push('/user')
     } catch (err: any) {
       setMessage(err?.response?.data?.message || "Xatolik yuz berdi");
     } finally {
@@ -60,7 +61,7 @@ const VerifyPage = () => {
         onSubmit={handleVerify}
         className="flex flex-col items-center gap-4"
       >
-        <input type="text" value={token} onChange={(e) => { setToken(e.target.value) }} />
+        <input type="text" value={email} onChange={(e) => { setToken(e.target.value) }} />
         <input
           onChange={(e) => setCode(e.target.value)}
           value={code}
