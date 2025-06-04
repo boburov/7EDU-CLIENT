@@ -1,31 +1,52 @@
 "use client"
 
+import { allCourse, getUserByEmail } from "@/app/api/service/api";
 import { CircleArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+
+interface User {
+  id: string;
+  name: string;
+  courses: [],
+  profilePic?: string;
+}
 
 const page = () => {
-  const router = useRouter()
+  const [user, setUser] = useState<User | null>(null)
+  const [allcouse, setAllCourse] = useState([])
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/login");
+    const fetchUser = async () => {
+
+      try {
+        const email = localStorage.getItem('userEmail');
+
+        allCourse().then((e) => {
+          setAllCourse(e)
+        })
+
+        const user = await getUserByEmail(String(email));
+        setUser(user)
+      } catch (error) {
+
+      }
     }
+    fetchUser()
   }, []);
 
+  console.log(allcouse);
 
   return (
     <section className="container p-5 text-white">
+      <h1>{user?.courses.length}</h1>
 
-
-      {/* MY COURSES */}
       {/* {
-        userData.userCourses.length > 0 && (<><h1 className="text-2xl font-bold mb-4">Kurslarim</h1>
+        user?.courses.length > 0 && (<><h1 className="text-2xl font-bold mb-4">Kurslarim</h1>
           <ul className="grid grid-cols-3 gap-5 max-md:grid-cols-1 mb-10">
-            {userData.userCourses.map((course, index) => {
+            {user?.courses.map((course, index) => {
               const progress =
                 (course.showedLesssons / course.countOfLessons) * 100;
 
@@ -33,7 +54,7 @@ const page = () => {
                 <li
                   key={index}
                 >
-                  <Link href={userData.userId + '/' + 'courses/' + course.courseName}
+                  <Link href={user.userId + '/' + 'courses/' + course.courseName}
                     className="flex items-center justify-between gap-4 px-2 py-1.5 bg-white/15 border border-white/15 text-white rounded-2xl transition-transform hover:scale-105"
                   >
 
@@ -51,8 +72,7 @@ const page = () => {
                       </span>
                       <span className="my-1">Maqsad: {course.mission}</span>
 
-                      {/* Progress bar */}
-      {/* <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3">
                         <span className="">Tugatildi:</span>
                         <div className="flex items-center gap-2 w-full">
                           <div className="w-full h-5 border rounded-full overflow-hidden px-[2px] py-0.5">
@@ -75,7 +95,11 @@ const page = () => {
           </ul></>
         )
       } */}
-      {/* ALL COURSES (COMING SOON) */}
+
+
+      ALL COURSES (COMING SOON)
+
+
       <h1 className="text-2xl font-bold">Barcha kurslar</h1>
     </section >
   );

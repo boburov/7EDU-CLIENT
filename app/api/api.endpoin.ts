@@ -35,7 +35,8 @@ const apiEndpoins = {
   deleteQuessions: (id: string) => `${main_url.quession}/${id}`,
 
   // user
-  getUsers: `${main_url.user}`,
+  getMe: `${main_url.user}/me`,
+  getUsers: `${main_url.user}/all`,
   getUserById: (token: string) => `${main_url.user}`,
   getOneUser: (id: string) => `${main_url.user}/${id}`,
   deleteUser: (id: number) => `${main_url.user}/delete/${id}`,

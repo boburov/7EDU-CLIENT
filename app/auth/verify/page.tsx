@@ -1,5 +1,6 @@
 "use client";
 
+import TwoFactorForm from "@/app/components/TwoFactor";
 import axios from "axios";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -40,8 +41,8 @@ const VerifyPage = () => {
       });
 
       setMessage(res.data.msg || "Email muvaffaqiyatli tasdiqlandi");
-      
-      router.push('/user')
+
+      router.push(`/user/${email}`)
     } catch (err: any) {
       setMessage(err?.response?.data?.message || "Xatolik yuz berdi");
     } finally {
@@ -50,38 +51,8 @@ const VerifyPage = () => {
   };
 
   return (
-    <div className="container py-5 text-white max-w-md mx-auto">
-      <Link href="signup">
-        <ArrowLeft size={32} strokeWidth={1.5} className="mb-6" />
-      </Link>
-
-      <h1 className="text-3xl text-center mb-6 font-semibold">Emailni Tasdiqlash</h1>
-
-      <form
-        onSubmit={handleVerify}
-        className="flex flex-col items-center gap-4"
-      >
-        <input type="text" value={email} onChange={(e) => { setToken(e.target.value) }} />
-        <input
-          onChange={(e) => setCode(e.target.value)}
-          value={code}
-          placeholder="Tasdiqlash kodini kiriting"
-          className="w-full h-12 px-4 rounded-md bg-[#1e2916] border border-white/20 text-white text-lg"
-          type="text"
-        />
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-[#00C835] w-full py-3 rounded-md text-xl font-bold text-white"
-        >
-          {loading ? "Yuborilmoqda..." : "Tasdiqlash"}
-        </button>
-      </form>
-
-      {message && (
-        <p className="text-center mt-6 text-yellow-400 font-medium">{message}</p>
-      )}
+    <div className="h-screen flex items-center justify-center">
+      <TwoFactorForm />
     </div>
   );
 };

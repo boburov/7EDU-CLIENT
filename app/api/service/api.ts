@@ -22,13 +22,21 @@ api.interceptors.response.use(
     }
 );
 
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
+
+
 export const getAllUser = async () => {
     try {
         const res = await api.get(apiEndpoins.getUsers)
         return res.data
     } catch (error) {
         console.log(error);
-
     }
 }
 
@@ -68,5 +76,36 @@ export const getUserById = async (token: string) => {
     }
 
 }
+
+export const getMe = async () => {
+    try {
+        const res = await api.get(apiEndpoins.getMe);
+        return res.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+
+export const allCourse = async () => {
+    try {
+        const allCourse = await api.get(apiEndpoins.allCourse).then((elem) => {
+            return elem.data
+        })
+        return allCourse
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const getUserByEmail = async (email: string) => {
+    try {
+        const res = await api.get(`/user/by-email?email=${email}`);
+        return res.data;
+    } catch (err) {
+        console.log("User topilmadi:", err);
+    }
+};
+
 
 export default api

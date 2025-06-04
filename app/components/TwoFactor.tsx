@@ -2,7 +2,7 @@ import { useState } from "react";
 import api, { verify } from "../api/service/api";
 
 export default function TwoFactorForm() {
-  const [codes, setCodes] = useState(["", "", "", ""]);
+  const [codes, setCodes] = useState(["", "", "", "", "", ""]);
 
   const handleChange = (value: string, index: number) => {
     if (/^\d*$/.test(value)) {
@@ -10,7 +10,7 @@ export default function TwoFactorForm() {
       updated[index] = value;
       setCodes(updated);
 
-      if (value && index < 3) {
+      if (value && index < 5) {
         const nextInput = document.getElementById(`code-${index + 1}`);
         nextInput?.focus();
       }
@@ -30,13 +30,11 @@ export default function TwoFactorForm() {
   };
 
   return (
-    <form className="bg-black/40 backdrop-blur-2xl max-md:scale-75 text-white p-6 rounded-lg max-w-sm w-full shadow-lg flex flex-col items-center relative">
-      <span className="absolute top-2 right-2 bg-neutral-800 text-gray-300 h-8 w-8 flex items-center justify-center rounded cursor-pointer font-semibold hover:bg-red-500 hover:text-white transition">
-        X
-      </span>
+    <form className="bg-black/40 backdrop-blur-2xl max-md:scale-90 text-white p-6 rounded-lg w-full shadow-lg flex flex-col items-center relative">
+
 
       <div className="text-center mb-5">
-        <h2 className="text-2xl font-bold">Two-Factor Verification</h2>
+        <h2 className="text-2xl font-bold">Emaliga kelgan kodni tasdiqlang</h2>
         <p className="text-base text-gray-400 mt-2">
           Enter the two-factor authentication code provided by the authenticator app
         </p>
