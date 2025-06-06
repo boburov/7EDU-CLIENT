@@ -23,9 +23,11 @@ api.interceptors.response.use(
 );
 
 api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+    if (typeof window !== 'undefined') {
+        const token = localStorage.getItem("token");
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
     }
     return config;
 });
@@ -60,8 +62,8 @@ export const verify = async (email: string, code: string) => {
 
 export const decodeToken = async (token: string) => {
     try {
-        const res = await api.post(apiEndpoins.decodeToken, token)
-        return res
+        const res = await api.post(apiEndpoins.decodeToken, { token });
+        return res.data;
     } catch (error) {
         console.log(error);
     }
@@ -70,16 +72,25 @@ export const decodeToken = async (token: string) => {
 export const getUserById = async (token: string) => {
     try {
         const res = await api.post(apiEndpoins.getUserById(token))
+        if (!res) {
+            console.log(`bu foydalanuvchu topilmadi`);
+
+        }
         return res
     } catch (error) {
-        console.log(error)
+        console.log(`Bu foydalauvchi topilmadi`)
     }
 
 }
 
 export const getMe = async () => {
     try {
-        const res = await api.get(apiEndpoins.getMe);
+        const token = localStorage.getItem("token");
+        const res = await api.get(apiEndpoins.getMe, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
         return res.data;
     } catch (error) {
         console.log(error);
@@ -104,6 +115,29 @@ export const getUserByEmail = async (email: string) => {
         return res.data;
     } catch (err) {
         console.log("User topilmadi:", err);
+    }
+};
+
+export const loginUser = async (data: { email: string, password: string }) => {
+    try {
+        const res = await api.post(apiEndpoins.loginUser, data);
+        return res.data;
+    } catch (err) {
+        console.log("Login xatoligi:", err);
+        throw err;
+    }
+};
+
+export const updateUser = async (id: string, data: Object) => {
+    try {
+        const res = await api.patch(apiEndpoins.getUserById(id), data);
+        if (!res) {
+            console.log(`bu foydalanuvchu topilmadi`);
+
+        }
+        return res.data;
+    } catch (error) {
+        console.log(`bu foydalanuvchu topilmadi`);
     }
 };
 

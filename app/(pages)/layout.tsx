@@ -24,16 +24,13 @@ const Layout = ({
     const fetchUser = async () => {
       try {
         const email = localStorage.getItem('userEmail');
-        console.log(email);
 
         const user = await getUserByEmail(String(email));
         setUser(user)
 
         await getMe();
-        console.log("Ishatovir bratishka");
 
       } catch (err) {
-        console.log("Unauthorized", err);
         router.push("/auth/login");
       }
     };
@@ -41,7 +38,6 @@ const Layout = ({
     fetchUser();
   }, []);
 
-  console.log(user);
 
 
   return (

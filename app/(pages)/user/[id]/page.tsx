@@ -1,6 +1,6 @@
 "use client"
 
-import { allCourse, getUserByEmail } from "@/app/api/service/api";
+import { allCourse, getMe, getUserByEmail } from "@/app/api/service/api";
 import { CircleArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -16,28 +16,22 @@ interface User {
 
 const page = () => {
   const [user, setUser] = useState<User | null>(null)
+  const router = useParams()
+  console.log(router.id);
+
   const [allcouse, setAllCourse] = useState([])
 
   useEffect(() => {
-    const fetchUser = async () => {
 
-      try {
-        const email = localStorage.getItem('userEmail');
-
-        allCourse().then((e) => {
-          setAllCourse(e)
-        })
-
-        const user = await getUserByEmail(String(email));
-        setUser(user)
-      } catch (error) {
-
-      }
-    }
-    fetchUser()
+    getMe()
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log("GetMe xato:", err);
+      });
   }, []);
 
-  console.log(allcouse);
 
   return (
     <section className="container p-5 text-white">

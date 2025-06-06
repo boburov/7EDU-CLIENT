@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { ArrowLeft, School } from "lucide-react";
-import { login } from "../../api/service/auth";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 

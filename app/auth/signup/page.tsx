@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, BookOpen } from 'lucide-react';
+import { ArrowLeft, BookOpen, EyeClosed, EyeIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -10,6 +10,9 @@ import api, { register } from '@/app/api/service/api';
 import TwoFactorForm from '@/app/components/TwoFactor';
 
 const SignupPage = () => {
+    const router = useRouter();
+    const [showPassword, setShowPassword] = useState(false);
+
     const [userData, setUserData] = useState({
         name: "",
         surname: "",
@@ -20,24 +23,38 @@ const SignupPage = () => {
     const [modal, SetModal] = useState(false)
     const [isError, setError] = useState(false)
 
-    const router = useRouter();
+    const togglePasswordVisibility = () => {
+        setShowPassword((prev) => !prev);
+    };
+
 
     const handleSignup = async () => {
         try {
-            await register(userData).then(e => {
-                console.log(e.token);
-                localStorage.setItem('userEmail', userData.email)
-                router.push('verify')
-            }).catch((e) => {
-                console.log(e);
-            })
-            setError(false)
 
+            if (
+                userData.name.trim() === "" ||
+                userData.surname.trim() === "" ||
+                userData.email.trim() === "" ||
+                userData.password.trim() === ""
+            ) {
+                console.log(`Error`);
+            } else {
+                localStorage.setItem("userEmail", userData.email);
+                router.push("verify");
+                const response = await register(userData);
+                if (response?.data?.token && response?.data?.user?._id) {
+                    localStorage.setItem("userId", response.data.user._id);
+                    localStorage.setItem("token", response.data.token);
+
+                } else {
+                    setError(true);
+                }
+            }
         } catch (error) {
-            setError(true)
-            console.log(error)
+            setError(true);
         }
     };
+
 
 
     return (
@@ -60,53 +77,68 @@ const SignupPage = () => {
                     {isError && <h1>Email Allaqachon Ro'yaxtdan O'tib Bo'lgan</h1>}
                     <form className="space-y-5">
                         <input
-                            type="text"
+                            required
                             name="name"
+                            type="text"
+                            autoComplete='off'
+                            placeholder="Ism"
                             value={userData.name}
                             onChange={(e) => setUserData({ ...userData, name: e.target.value })}
-                            placeholder="Ism"
                             className="not-focus-visible:bg-white/10 w-full h-14 border rounded-md border-white/20 text-white px-3 bg-white/10"
-                            required
                         />
                         <input
+                            required
                             type="text"
                             name="surname"
+                            autoComplete='off'
+                            placeholder="Familya"
                             value={userData.surname}
                             onChange={(e) => setUserData({ ...userData, surname: e.target.value })}
-                            placeholder="Familya"
                             className="autofill:bg-white/10 w-full h-14 border rounded-md border-white/20 text-white px-3 bg-white/10"
-                            required
                         />
 
                         <input
+                            required
                             type="email"
                             name="email"
+                            autoComplete='off'
+                            placeholder="Email"
                             value={userData.email}
                             onChange={(e) => setUserData({ ...userData, email: e.target.value })}
-                            placeholder="Email"
                             className="autofill:bg-white/10 w-full h-14 border rounded-md border-white/20 text-white px-3 bg-white/10"
-                            required
                         />
 
                         <input
+                            required
                             type="tel"
                             name="phone number"
-                            value={userData.phonenumber}
-                            onChange={(e) => setUserData({ ...userData, phonenumber: String(e.target.value) })}
+                            autoComplete='off'
                             placeholder="telefon raqam"
+                            value={userData.phonenumber}
+                            pattern="^\+?998(9[0-9]|3[3]|7[1]|8[8]|5[5]|6[1]|7[0]|9[1])\d{7}$"
+                            onChange={(e) => setUserData({ ...userData, phonenumber: String(e.target.value) })}
                             className="autofill:bg-white/10 w-full h-14 border rounded-md border-white/20 text-white px-3 bg-white/10"
-                            required
                         />
 
-                        <input
-                            type="password"
-                            name="password"
-                            value={userData.password}
-                            onChange={(e) => setUserData({ ...userData, password: e.target.value })}
-                            placeholder="Parol"
-                            className="autofill:bg-white/10 w-full h-14 border rounded-md border-white/20 text-white px-3 bg-white/10"
-                            required
-                        />
+                        <div className="relative w-full">
+                            <input
+                                required
+                                name="password"
+                                autoComplete='off'
+                                placeholder="Parol"
+                                value={userData.password}
+                                onChange={(e) => setUserData({ ...userData, password: e.target.value })}
+                                type={showPassword ? "text" : "password"}
+                                className="autofill:bg-white/10 w-full h-14 border rounded-md border-white/20 text-white px-3 bg-white/10"
+                            />
+                            <button
+                                type="button"
+                                onClick={togglePasswordVisibility}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-white"
+                            >
+                                {showPassword ? <EyeIcon/> : <EyeClosed/>}
+                            </button>
+                        </div>
 
                         <button
                             onClick={(e) => {
