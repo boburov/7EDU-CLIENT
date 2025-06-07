@@ -1,99 +1,89 @@
-"use client"
+"use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react"
-import api, { getUserById, updateUser, verify } from "../api/service/api";
-import apiEndpoins from "../api/api.endpoin";
+import { useRef, useState } from "react";
+import api, { verifyCode } from "../api/service/api";
+import apiEndpoints from "../api/api.endpoin";
 
-function TwoFactor({ codeSMS = "", userId = "" }) {
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const router = useRouter()
+interface TwoFactorProps {
+  codeSMS: string;
+  userId: string;
+}
+
+export default function TwoFactor() {
+  const refs = useRef<(HTMLInputElement | null)[]>([]);
+  const router = useRouter();
+  const [userId, setUserId] = useState("")
+  const [code, setCode] = useState<string[]>(new Array(6).fill(""));
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [code, setCode] = useState(["", "", "", "", "", ""])
+  const email = typeof window !== 'undefined' ? localStorage.getItem("email") || "" : "";
 
-  console.log(`Correct Code :`, codeSMS);
-
-
-  const email = String(localStorage.getItem("userEmail"))
-
-  const handleChange = (value: string, index: number) => {
-    const newCode = [...code];
-    newCode[index] = value;
-    setCode(newCode);
-    if (value && index < code.length - 1) {
-      setTimeout(() => {
-        inputRefs.current[index + 1]?.focus();
-      }, 10);
-    }
+  const handleChange = (val: string, idx: number) => {
+    if (!/^[A-Za-z0-9]?$/.test(val)) return;
+    const arr = [...code];
+    arr[idx] = val.toUpperCase();
+    setCode(arr);
+    if (val && idx < 5) refs.current[idx + 1]?.focus();
   };
 
-  const chechCode = async (codeSMS: string) => {
+
+
+  const checkCode = async () => {
+    const entered = code.join("");
+    if (entered.length !== 6) {
+      setError("Iltimos, 6 belgidan iborat kod kiriting.");
+      return;
+    }
+    setError(""); setSuccess("");
     try {
-      if (code.join("") === codeSMS) {
-        const frcode = code.join("")
-        api.post(apiEndpoins.verifyCode, { email, code: frcode }).then((e) => {
-          console.log(e.data);
-          if (e.data.token) {
-            localStorage.setItem("token", e.data.token);
-          }
-        })
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("code", entered);
 
-        setSuccess("Kod to‘g‘ri! Siz muvaffaqiyatli tasdiqlandingiz.");
-        setTimeout(() => router.push(`/user/${userId}`), 1000);
+      await verifyCode(formData).then((e) => {
+        setTimeout(() => router.push(`/user/${e.user.id}`), 1000);
+      })
 
-      } else { 
-        setError("Kod noto‘g‘ri. Qayta urinib ko‘ring.");
+      setSuccess("Kod to‘g‘ri! Siz tasdiqlandingiz.");
 
-      }
-    } catch (error) {
-      setError("Xatolik yuz berdi. Iltimos, keyinroq qayta urinib ko‘ring.");
-      console.log('Xatolik:', error);
-
+    } catch (e: any) {
+      setError(typeof e === "string" ? e : "Kod noto‘g‘ri.");
     }
   };
 
-
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-    if (e.key === "Backspace" && !code[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
-
+  const handleKeyDown = (e: React.KeyboardEvent, idx: number) => {
+    if (e.key === "Backspace" && !code[idx] && idx > 0) {
+      refs.current[idx - 1]?.focus();
     }
   };
 
   return (
     <div className="px-4">
-      {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
-      {success && <p className="text-green-500 text-sm mb-2">{success}</p>}
-
-      <section className="grid grid-cols-6 gap-2 w-full mb-4">
-        {code.map((elem, i) => {
-          return <input
+      {error && <p className="text-red-500 mb-2">{error}</p>}
+      {success && <p className="text-green-500 mb-2">{success}</p>}
+      <div className="grid grid-cols-6 gap-2 mb-4">
+        {code.map((ch, i) => (
+          <input
             key={i}
-            ref={(el) => {
-              inputRefs.current[i] = el;
-            }}
+            ref={el => { refs.current[i] = el; }}
             maxLength={1}
-            value={elem}
-            onChange={(e) => handleChange(e.target.value, i)}
-            onKeyDown={(e) => handleKeyDown(e, i)}
-            type="text"
-            className="h-14 rounded-md bg-black/60 text-white text-xl text-center" />
-        })}
-      </section>
-
-      <section className="flex items-center justify-between gap-2 w-full">
-        <button
-          onClick={() => chechCode(codeSMS)}
-          className="uppercase text-white border border-white bg-black w-1/2 h-12">tasdqilash</button>
-        <button
-          onClick={() => setCode(["", "", "", "", "", ""])}
-          className="uppercase text-white border border-white bg-white/10 w-1/2 h-12">tozalash</button>
-      </section>
-
+            value={ch}
+            onChange={e => handleChange(e.target.value, i)}
+            onKeyDown={e => handleKeyDown(e, i)}
+            inputMode="text"
+            className="h-14 rounded-md bg-black/60 text-white text-xl text-center"
+          />
+        ))}
+      </div>
+      <div className="flex gap-2">
+        <button onClick={checkCode} className="flex-1 uppercase text-white border border-white bg-black h-12 rounded-md">
+          tasdiqlash
+        </button>
+        <button onClick={() => setCode(new Array(6).fill(""))} className="flex-1 uppercase text-white border border-white bg-white/10 h-12 rounded-md">
+          tozalash
+        </button>
+      </div>
     </div>
-  )
+  );
 }
-
-export default TwoFactor

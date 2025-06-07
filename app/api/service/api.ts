@@ -3,9 +3,19 @@ import apiEndpoins from '../api.endpoin';
 
 const api = axios.create({
     baseURL: 'http://localhost:3000/',
-    headers: {
-        "Content-Type": "application/json",
-    },
+});
+
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    if (!(config.data instanceof FormData)) {
+        config.headers["Content-Type"] = "application/json";
+    }
+
+    return config;
 });
 
 api.interceptors.response.use(
@@ -16,49 +26,47 @@ api.interceptors.response.use(
             error.message ||
             "Noma'lum xatolik yuz berdi.";
         console.error("API Error:", message);
-
-
         return Promise.reject(message);
     }
 );
 
-api.interceptors.request.use((config) => {
-    if (typeof window !== 'undefined') {
-        const token = localStorage.getItem("token");
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
+export const updateUserProfilePic = async (userId: string, formData: FormData) => {
+    try {
+        const response = await api.post(apiEndpoins.updateUserProfilePic(userId), formData);
+        return response.data;
+    } catch (error: any) {
+        console.error("API Error:", error.response?.data || error.message);
+        throw error;
     }
-    return config;
-});
-
+};
 
 export const getAllUser = async () => {
     try {
-        const res = await api.get(apiEndpoins.getUsers)
-        return res.data
+        const res = await api.get(apiEndpoins.getUsers);
+        return res.data;
     } catch (error) {
         console.log(error);
     }
-}
+};
 
-export const register = async (data: Object) => {
-    try {
-        const res = await api.post(apiEndpoins.registerUser, data)
-        return res.data
-    } catch (error) {
-        console.log(error);
-    }
-}
+export const register = async (data: object) => {
+    const res = await api.post(apiEndpoins.registerUser, data);
+    localStorage.setItem('token', res.data.token);
+    return res.data;
+};
 
-export const verify = async (email: string, code: string) => {
-    try {
-        const res = await api.post(apiEndpoins.verifyCode, { email, code })
-        return res
-    } catch (error) {
-        console.log(error);
-    }
-}
+export const verifyCode = async (data: object) => {
+    const res = await api.post(apiEndpoins.verifyCode, data);
+    localStorage.setItem('token', res.data.token);
+    return res.data;
+};
+
+export const login = async (data: object) => {
+    const res = await api.post(apiEndpoins.loginUser, data);
+    localStorage.setItem('token', res.data.token);
+    console.log(res.data);
+    return res.data;
+};
 
 export const decodeToken = async (token: string) => {
     try {
@@ -67,30 +75,20 @@ export const decodeToken = async (token: string) => {
     } catch (error) {
         console.log(error);
     }
-}
+};
 
-export const getUserById = async (token: string) => {
+export const getUserById = async (id: string) => {
     try {
-        const res = await api.post(apiEndpoins.getUserById(token))
-        if (!res) {
-            console.log(`bu foydalanuvchu topilmadi`);
-
-        }
-        return res
+        const res = await api.get(apiEndpoins.getUserById(id));
+        return res.data;
     } catch (error) {
-        console.log(`Bu foydalauvchi topilmadi`)
+        console.log(`Bu foydalanuvchi topilmadi`);
     }
-
-}
+};
 
 export const getMe = async () => {
     try {
-        const token = localStorage.getItem("token");
-        const res = await api.get(apiEndpoins.getMe, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        const res = await api.get(apiEndpoins.getMe);
         return res.data;
     } catch (error) {
         console.log(error);
@@ -100,46 +98,41 @@ export const getMe = async () => {
 
 export const allCourse = async () => {
     try {
-        const allCourse = await api.get(apiEndpoins.allCourse).then((elem) => {
-            return elem.data
-        })
-        return allCourse
+        const allCourse = await api.get(apiEndpoins.allCourse);
+        return allCourse.data;
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
-}
+};
 
 export const getUserByEmail = async (email: string) => {
     try {
-        const res = await api.get(`/user/by-email?email=${email}`);
+        const res = await api.get(`/user/by-email`, {
+            params: { email },
+        });
         return res.data;
     } catch (err) {
         console.log("User topilmadi:", err);
     }
 };
 
-export const loginUser = async (data: { email: string, password: string }) => {
+export const updateUser = async (id: string, data: object) => {
     try {
-        const res = await api.post(apiEndpoins.loginUser, data);
-        return res.data;
-    } catch (err) {
-        console.log("Login xatoligi:", err);
-        throw err;
-    }
-};
-
-export const updateUser = async (id: string, data: Object) => {
-    try {
-        const res = await api.patch(apiEndpoins.getUserById(id), data);
-        if (!res) {
-            console.log(`bu foydalanuvchu topilmadi`);
-
-        }
+        const res = await api.patch(apiEndpoins.updateUser(id), data);
         return res.data;
     } catch (error) {
-        console.log(`bu foydalanuvchu topilmadi`);
+        console.log(`Bu foydalanuvchi topilmadi`);
     }
 };
 
+export const deleteUserProfilePic = async (userId: string) => {
+    try {
+        const response = await api.delete(`/user/deleteProfilePic/${userId}`);
+        return response.data;
+    } catch (error: any) {
+        console.error("API Error:", error.response?.data || error.message);
+        throw error;
+    }
+};
 
-export default api
+export default api;
