@@ -1,10 +1,11 @@
 "use client";
 
 import Footer from "./pages_components/Footer";
-import { CircleArrowLeft, Trash } from "lucide-react";
+import { CircleArrowLeft, DollarSign, PiggyBank, Trash, Wallet2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
-import { deleteUserProfilePic, getMe, getUserByEmail, updateUserProfilePic } from "../api/service/api";
+import { deleteUserProfilePic, getMe, updateUserProfilePic } from "../api/service/api";
+import Link from "next/link";
 
 interface User {
   id: string;
@@ -13,7 +14,7 @@ interface User {
   courses: any[];
   email: string;
   phonenumber: string;
-  coin: number;
+  coins: number;
 }
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
@@ -43,6 +44,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
     fetchUser();
   }, [router]);
+
+  function formatNumberWithCommas(num: number): string {
+    return num.toLocaleString('en-US');
+  }
 
 
   const onProfilePicClick = () => {
@@ -75,20 +80,18 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       console.error("Rasmni o‘chirishda xatolik:", error);
     }
   };
-  console.log(user);
+
 
   return (
     <>
-      <button
-        onClick={() => router.back()}
-        aria-label="Back"
-        type="button"
+      <div
+        onClick={()=>router.back()}
       >
         <CircleArrowLeft size={50} strokeWidth={1} className="mx-4 mt-4 text-white" />
-      </button>
+      </div>
 
       {user && (
-        <section className="container text-white pt-10">
+        <section className="container text-white pt-10 relative">
           <div className="flex items-center gap-3 mb-4 cursor-pointer" onClick={onProfilePicClick}>
             {user.profilePic ? (
               <div className="relative w-20 h-20">
@@ -122,17 +125,24 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </div>
             )}
 
-            <div className="flex flex-col">
-              <h2 className="text-2xl font-semibold">{user.name}</h2>
-              <span className="text-xs text-gray-300">{user.email}</span>
+            <div className="flex flex-col items-start space-y-">
+              <h2 className="text-xl font-semibold">{user.name}</h2>
+              <span className="text-sm text-gray-300">{user.email}</span>
+              <div className="mt-1 inline-flex items-end gap-2 bg-yellow-100 text-gray-900 px-3 py-0.5 rounded-full text-sm font-medium">
+                <Wallet2 width={20} /> {formatNumberWithCommas(user.coins )} tanga
+              </div>
             </div>
+
           </div>
         </section>
       )}
 
       {children}
       <span className="pb-5 pt-6 inline-block"></span>
-      <Footer />
+
+      <div className="px-3">
+        <Footer />
+      </div>
     </>
   );
 };

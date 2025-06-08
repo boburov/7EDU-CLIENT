@@ -27,7 +27,7 @@ const Login = () => {
       }
     } catch (error: any) {
       console.log(error);
-      setMsg("Serverda xatolik");
+      setMsg("Parol Yoki Email Xato");
     }
   };
 

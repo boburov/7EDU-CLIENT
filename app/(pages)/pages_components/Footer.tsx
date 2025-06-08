@@ -2,22 +2,22 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { BookOpen, CircleUserIcon, Home, LayoutDashboard, Settings } from "lucide-react"
+import { AlignRightIcon, BellRing, BookOpen, CircleUserIcon, Home, LayoutDashboard, Settings } from "lucide-react"
 
 const navLinks = [
     { href: "/", icon: Home, label: "Home" },
     { href: "/user/courses", icon: BookOpen, label: "Courses" },
     { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-    { href: "/profile", icon: CircleUserIcon, label: "Profile" },
-    { href: "/settings", icon: Settings, label: "Settings" },
+    { href: "/settings", icon: BellRing, label: "Settings" },
+    { href: "/user/profile", icon: CircleUserIcon, label: "Profile" },
 ]
 
 const Footer = () => {
     const pathname = usePathname()
 
     return (
-        <footer className="fixed bottom-0 w-full z-50 bg-[#343434]/90 backdrop-blur-xl border-t border-white/10">
-            <div className="max-w-[1440px] mx-auto px-2 py-2">
+        <footer className="fixed left-0 bottom-0 w-full z-50 px-1 pb-1">
+            <div className="container py-2  bg-[#343434]/50 backdrop-blur-xl border-t border-white/10 rounded-xl">
                 <ul className="flex items-center justify-between gap-2 px-2 py-3 rounded-lg">
                     {navLinks.map(({ href, icon: Icon, label }) => {
                         const isActive = pathname === href

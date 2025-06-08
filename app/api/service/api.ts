@@ -40,15 +40,6 @@ export const updateUserProfilePic = async (userId: string, formData: FormData) =
     }
 };
 
-export const getAllUser = async () => {
-    try {
-        const res = await api.get(apiEndpoins.getUsers);
-        return res.data;
-    } catch (error) {
-        console.log(error);
-    }
-};
-
 export const register = async (data: object) => {
     const res = await api.post(apiEndpoins.registerUser, data);
     localStorage.setItem('token', res.data.token);
@@ -64,26 +55,7 @@ export const verifyCode = async (data: object) => {
 export const login = async (data: object) => {
     const res = await api.post(apiEndpoins.loginUser, data);
     localStorage.setItem('token', res.data.token);
-    console.log(res.data);
     return res.data;
-};
-
-export const decodeToken = async (token: string) => {
-    try {
-        const res = await api.post(apiEndpoins.decodeToken, { token });
-        return res.data;
-    } catch (error) {
-        console.log(error);
-    }
-};
-
-export const getUserById = async (id: string) => {
-    try {
-        const res = await api.get(apiEndpoins.getUserById(id));
-        return res.data;
-    } catch (error) {
-        console.log(`Bu foydalanuvchi topilmadi`);
-    }
 };
 
 export const getMe = async () => {
@@ -96,34 +68,43 @@ export const getMe = async () => {
     }
 };
 
-export const allCourse = async () => {
+export const checkEmail = async (email: string) => {
     try {
-        const allCourse = await api.get(apiEndpoins.allCourse);
-        return allCourse.data;
-    } catch (error) {
-        console.log(error);
+        const res = await api.get(`user/check?email=${encodeURIComponent(email)}`);
+        return res.data;
+    } catch (err: any) {
+        if (err.response?.status === 400) {
+            return { exists: true };
+        }
+        throw new Error('Email tekshirishda xatolik');
     }
 };
 
 export const getUserByEmail = async (email: string) => {
     try {
-        const res = await api.get(`/user/by-email`, {
-            params: { email },
-        });
-        return res.data;
-    } catch (err) {
-        console.log("User topilmadi:", err);
+        const res = await axios.get(`/auth/by-email?email=${encodeURIComponent(email)}`);
+
+        if (res.status === 404) return null;
+
+        // if (!res.ok) throw new Error('Server xatolik');
+
+        return await res.data
+    } catch (error) {
+        console.error('Email tekshirishda xatolik:', error);
+        return null;
     }
 };
-
+9
 export const updateUser = async (id: string, data: object) => {
     try {
         const res = await api.patch(apiEndpoins.updateUser(id), data);
-        return res.data;
+        return res.data.user;
     } catch (error) {
-        console.log(`Bu foydalanuvchi topilmadi`);
+        console.error("updateUser error:", error);
+        throw error;
     }
 };
+
 
 export const deleteUserProfilePic = async (userId: string) => {
     try {
@@ -132,6 +113,17 @@ export const deleteUserProfilePic = async (userId: string) => {
     } catch (error: any) {
         console.error("API Error:", error.response?.data || error.message);
         throw error;
+    }
+};
+
+
+// courses
+export const allCourse = async () => {
+    try {
+        const allCourse = await api.get(apiEndpoins.allCourse);
+        return allCourse.data;
+    } catch (error) {
+        console.log(error);
     }
 };
 

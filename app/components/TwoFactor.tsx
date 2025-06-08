@@ -30,18 +30,14 @@ export default function TwoFactor() {
 
 
   const checkCode = async () => {
-    const entered = code.join("");
+    const entered = String(code.join(""))
     if (entered.length !== 6) {
       setError("Iltimos, 6 belgidan iborat kod kiriting.");
       return;
     }
     setError(""); setSuccess("");
     try {
-      const formData = new FormData();
-      formData.append("email", email);
-      formData.append("code", entered);
-
-      await verifyCode(formData).then((e) => {
+      await verifyCode({ email, code: entered }).then((e) => {
         setTimeout(() => router.push(`/user/${e.user.id}`), 1000);
       })
 

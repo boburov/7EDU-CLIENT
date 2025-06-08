@@ -30,12 +30,6 @@ const SignupPage = () => {
         }
 
         try {
-            const formData = new FormData();
-            formData.append("name", userData.name);
-            formData.append("surname", userData.surname);
-            formData.append("email", userData.email);
-            formData.append("phonenumber", userData.phonenumber);
-            formData.append("password", userData.password);
 
             const res = await register(userData);
             if (res.token) {
