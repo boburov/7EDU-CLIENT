@@ -147,4 +147,13 @@ export const allCourse = async () => {
     }
 };
 
+export const GetCourseById = async (id: string) => {
+    try {
+        const res = await api.get(apiEndpoins.getCategory(id))
+        return res
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 export default api;

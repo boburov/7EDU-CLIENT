@@ -24,7 +24,7 @@ const Login = () => {
 
       if (data) {
         const userId = data.checkId.userID;
-        router.push(`user/settings/password`);
+        router.push(`/user/${userId}`);
       } else {
         setMsg("Login muvaffaqiyatsiz");
       }

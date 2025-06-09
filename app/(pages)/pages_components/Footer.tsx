@@ -34,7 +34,7 @@ const Footer = () => {
 
     const navLinks = [
         { href: `/user/${userId}`, icon: Home, label: "Home" },
-        { href: "/user/courses", icon: LayoutDashboard, label: "Courses" },
+        { href: "/courses", icon: LayoutDashboard, label: "Courses" },
         { href: "/dashboard", icon: ChartArea, label: "Dashboard" },
         { href: "/notifications", icon: BellRing, label: "Notifications" },
         { href: "/user/profile", icon: CircleUserIcon, label: "Profile" },
