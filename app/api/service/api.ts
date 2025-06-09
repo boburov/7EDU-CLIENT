@@ -94,7 +94,7 @@ export const getUserByEmail = async (email: string) => {
         return null;
     }
 };
-9
+
 export const updateUser = async (id: string, data: object) => {
     try {
         const res = await api.patch(apiEndpoins.updateUser(id), data);
@@ -112,6 +112,16 @@ export const deleteUserProfilePic = async (userId: string) => {
         return response.data;
     } catch (error: any) {
         console.error("API Error:", error.response?.data || error.message);
+        throw error;
+    }
+};
+
+export const markNotificationAsRead = async (notificationRecipientId: string) => {
+    try {
+        const res = await api.put(`/notifications/${notificationRecipientId}`, { isRead: true });
+        return res.data;
+    } catch (error) {
+        console.error("markNotificationAsRead error:", error);
         throw error;
     }
 };

@@ -5,7 +5,7 @@ import { CircleArrowLeft, DollarSign, PiggyBank, Trash, Wallet2 } from "lucide-r
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { deleteUserProfilePic, getMe, updateUserProfilePic } from "../api/service/api";
-import Link from "next/link";
+import { SessionProvider } from "next-auth/react";
 
 interface User {
   id: string;
@@ -85,7 +85,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <div
-        onClick={()=>router.back()}
+        onClick={() => router.back()}
       >
         <CircleArrowLeft size={50} strokeWidth={1} className="mx-4 mt-4 text-white" />
       </div>
@@ -129,15 +129,17 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <h2 className="text-xl font-semibold">{user.name}</h2>
               <span className="text-sm text-gray-300">{user.email}</span>
               <div className="mt-1 inline-flex items-end gap-2 bg-yellow-100 text-gray-900 px-3 py-0.5 rounded-full text-sm font-medium">
-                <Wallet2 width={20} /> {formatNumberWithCommas(user.coins )} tanga
+                <Wallet2 width={20} /> {formatNumberWithCommas(user.coins)} tanga
               </div>
             </div>
 
           </div>
         </section>
       )}
-
-      {children}
+      
+      <SessionProvider>
+        {children}
+      </SessionProvider>
       <span className="pb-5 pt-6 inline-block"></span>
 
       <div className="px-3">

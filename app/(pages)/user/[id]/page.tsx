@@ -56,21 +56,21 @@ const UserPage = () => {
                 className="w-1/2 h-32 object-cover rounded"
               />
               <div className="flex flex-col w-full h-11/12 justify-between items-start font-[robolight] tracking-wide">
-                <h3 className="uppercase font-bold text-green-500 text-base mb-2 tracking-widest">
+                <h3 className="uppercase font-bold text-green-500 text-base mb-1 tracking-widest">
                   {kurs.title}
                 </h3>
-                <span className="text-base leading-2">
+                <span className="text-sm leading-2">
                   <strong>Darslar Soni:</strong>{" "}
                   <span className="font-light">{kurs.lessons.length}</span>
                 </span>
-                <span className="my-1 text-sm leading-5">
+                <span className="my-1 text-sm leading-5 w-36 truncate">
                   <strong>Maqsad: </strong> {kurs.goal}
                 </span>
                 <Link
                   href={`/kurs/${kurs.id}`} // kursga mos yo‘l berildi
-                  className="px-3 py-1.5 bg-green-500 rounded-md flex items-center gap-2 text-sm"
+                  className="px-3 py-1.5 bg-green-500 rounded-md flex items-center gap-2 text-xs"
                 >
-                  <Lock /> Demo Darslarni Ko'rish
+                  <Lock width={18}/> Demo Darslarni Ko'rish
                 </Link>
               </div>
             </li>
