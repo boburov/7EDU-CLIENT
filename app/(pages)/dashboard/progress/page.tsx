@@ -1,22 +1,35 @@
-import { Book } from "lucide-react"
+"use client";
+import { BookText, HelpCircle, ClipboardCheck } from "lucide-react";
 
 const page = () => {
   return (
-    <div className="container pt-5">
-      <div className="flex items-center gap-5 w-full rounded-xl border mb-3 border-yellow-500/30 bg-yellow-600/10 text-yellow-500 h-20 px-3">
-        <Book width={50} height={50} strokeWidth={1} />
-        <p className="text-white text-xl">Lug'at</p>
+    <div className="container pt-6 space-y-4 max-w-3xl mx-auto">
+
+      <div className="flex items-center justify-between gap-4 w-full rounded-2xl border border-amber-500/30 bg-amber-500/10 text-amber-500 px-6 py-4 shadow">
+        <div className="flex items-center gap-5">
+          <BookText width={42} height={42} strokeWidth={1.5} />
+          <p className="text-white text-lg font-semibold">Lug'at</p>
+        </div>
+        <span className="text-white/80 font-bold text-sm">30 / 100%</span>
       </div>
-      <div className="flex items-center gap-5 w-full rounded-xl border mb-3 border-sky-500/30 bg-sky-600/10 text-sky-500 h-20 px-3">
-        <Book width={50} height={50} strokeWidth={1} />
-        <p className="text-white text-xl">Savollar</p>
+
+      <div className="flex items-center justify-between gap-4 w-full rounded-2xl border border-rose-500/30 bg-rose-500/10 text-rose-500 px-6 py-4 shadow">
+        <div className="flex items-center gap-5">
+          <HelpCircle width={42} height={42} strokeWidth={1.5} />
+          <p className="text-white text-lg font-semibold">Savollar</p>
+        </div>
+        <span className="text-white/80 font-bold text-sm">30 / 100%</span>
       </div>
-      <div className="flex items-center gap-5 w-full rounded-xl border border-gray-500/30 bg-gray-600/10 text-gray-500 h-20 px-3">
-        <Book width={50} height={50} strokeWidth={1} />
-        <p className="text-white text-xl">Test</p>
+
+      <div className="flex items-center justify-between gap-4 w-full rounded-2xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-500 px-6 py-4 shadow">
+        <div className="flex items-center gap-5">
+          <ClipboardCheck width={42} height={42} strokeWidth={1.5} />
+          <p className="text-white text-lg font-semibold">Test</p>
+        </div>
+        <span className="text-white/80 font-bold text-sm">30 / 100%</span>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default page;

@@ -1,91 +1,90 @@
 "use client";
-import { useState } from "react";
-import { updateUser } from "@/app/api/service/api";
-import { useSession } from "next-auth/react";
-
-declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string;
-      name: string;
-      email: string;
-      image?: string;
-    };
-  }
-
-  interface User {
-    id: string;
-  }
-}
+import { useEffect, useState } from "react";
+import { getMe, updateUser } from "@/app/api/service/api";
+import { Check, CheckSquare, Lock, Square } from "lucide-react";
 
 const PasswordChanger = () => {
-  const [currentPassword, setCurrentPassword] = useState("");
+  const [userId, setUserId] = useState<string | null>(null);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
-  const { data: session } = useSession();
+  const [type, setType] = useState("password")
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const data = await getMe();
+        setUserId(data.id);
+      } catch (error) {
+        setMessage("Foydalanuvchini aniqlab bo‘lmadi.");
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const handleChangePassword = async () => {
-    if (!session?.user?.id) {
-      setMessage("Foydalanuvchi aniqlanmadi");
+
+    if (newPassword.trim() === "" || confirmPassword.trim() === "") setMessage("Paroll bo'sh bo'lmasligi kerak")
+
+    if (!userId) {
+      setMessage("Foydalanuvchi aniqlanmadi.");
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setMessage("Yangi parollar bir xil emas");
+      setMessage("Yangi parollar mos emas.");
       return;
     }
 
     try {
-      await updateUser(session.user.id, {
-        currentPassword,
-        password: newPassword,
-      });
-      setMessage("✅ Parol muvaffaqiyatli yangilandi");
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-    } catch (e: any) {
-      setMessage("❌ " + (e?.response?.data?.message || "Xatolik yuz berdi"));
+      if (newPassword.trim() === "" || confirmPassword.trim() === "") {
+        setMessage("Paroll bo'sh bo'lmasligi kerak")
+      } else {
+        await updateUser(userId, { password: newPassword });
+        setMessage("Parol yangilandi. Emailga xabar yuborildi.");
+        setNewPassword("");
+        setConfirmPassword("");
+      }
+    } catch (error: any) {
+      setMessage("Xatolik: " + (error?.response?.data?.message || "Parolni o‘zgartirib bo‘lmadi."));
     }
   };
 
   return (
-    <div className="bg-white/10 p-6 mt-10 rounded-xl space-y-4 max-w-md">
-      <h2 className="text-xl font-bold text-white">🔐 Parolni o‘zgartirish</h2>
+    <div className="container flex flex-col gap-4 pt-5">
+      <h2 className="text-xl font-bold text-white flex items-center gap-3"><Lock /> Parolni o‘zgartirish</h2>
 
       <input
-        type="password"
-        placeholder="Hozirgi parol"
-        className="w-full px-4 py-2 rounded bg-white/10 text-white border border-gray-500"
-        value={currentPassword}
-        onChange={(e) => setCurrentPassword(e.target.value)}
-      />
-
-      <input
-        type="password"
+        type={type}
         placeholder="Yangi parol"
-        className="w-full px-4 py-2 rounded bg-white/10 text-white border border-gray-500"
+        className="w-full px-4 py-3 rounded bg-white/10 text-white border border-gray-500"
         value={newPassword}
         onChange={(e) => setNewPassword(e.target.value)}
       />
 
       <input
-        type="password"
+        type={type}
         placeholder="Yangi parol (takroran)"
-        className="w-full px-4 py-2 rounded bg-white/10 text-white border border-gray-500"
+        className="w-full px-4 py-3 rounded bg-white/10 text-white border border-gray-500"
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
       />
 
+      <span className="flex items-center gap-3 text-white">
+        {type === "text" && <CheckSquare onClick={() => setType("password")} />}
+        {type === "password" && <Square onClick={() => setType("text")} />}
+        <p>{type == "password" ? "ko'rish" : "berkitish"}</p>
+      </span>
+
       <button
         onClick={handleChangePassword}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded w-full"
+        className="bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-white px-4 py-3 rounded w-full"
       >
         Parolni yangilash
       </button>
 
-      {message && <p className="text-yellow-300">{message}</p>}
+      {message && <p className="text-amber-300">{message}</p>}
     </div>
   );
 };

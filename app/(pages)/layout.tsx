@@ -136,11 +136,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           </div>
         </section>
       )}
-      
-      <SessionProvider>
-        {children}
-      </SessionProvider>
-      <span className="pb-5 pt-6 inline-block"></span>
+
+      {children}
+      <span className="pb-20 inline-block"></span>
 
       <div className="px-3">
         <Footer />

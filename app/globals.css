@@ -16,15 +16,19 @@
   src: url(./fonts//robolightt.ttf);
 }
 
-.robo-light{
+.robo-light {
   font-family: robolight;
 }
 
 body {
-  @apply bg-gradient-to-b dark:from-[#0e0f0e] dark:via-[#1e2916] dark:to-[#161616] from-[#f4f4f4] via-[#d7e8cc] to-[#eaeaea] h-screen font-[robobold]
+  @apply min-h-screen bg-gradient-to-b from-[#f4f4f4] via-[#d7e8cc] to-[#eaeaea] dark:from-[#0e0f0e] dark:via-[#1e2916] dark:to-[#161616] font-[robobold];
 }
 
 .container {
   @apply w-full max-w-[1240px] mx-auto px-4;
   @apply sm:px-6 lg:px-8;
+}
+
+nextjs-portal {
+  display: none !important;
 }

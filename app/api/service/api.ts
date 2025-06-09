@@ -126,6 +126,16 @@ export const markNotificationAsRead = async (notificationRecipientId: string) =>
     }
 };
 
+export const forgotPassword = async (email: string) => {
+    try {
+        const res = await api.post('/auth/forgot-password', { email });
+        return res.data;
+    } catch (error) {
+        console.error('forgotPassword error:', error);
+        throw error;
+    }
+};
+
 
 // courses
 export const allCourse = async () => {

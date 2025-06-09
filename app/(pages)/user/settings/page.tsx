@@ -120,7 +120,7 @@ const Page = () => {
   return (
     <div className="max-w-md mx-auto p-6 rounded-lg shadow-lg text-white">
       <button
-        className="flex items-center gap-2 bg-green-600 hover:bg-green-700 transition-colors px-5 py-2 rounded-lg mb-6"
+        className="flex items-center gap-2 bg-green-600/30 hover:bg-green-700/40 border border-green-500/20 transition-colors px-5 py-2 rounded-lg mb-6"
         onClick={() => setIsEditing(!isEditing)}
         aria-label={isEditing ? "Bekor qilish" : "Tahrirlash"}
       >
@@ -177,7 +177,7 @@ const Page = () => {
         {isEditing && (
           <button
             type="submit"
-            className="w-full bg-green-600 hover:bg-blue-700 transition-colors py-3 rounded-md text-white font-semibold mt-4"
+            className="w-full bg-green-600/20 border border-green-600 hover:bg-green-700/40 transition-colors py-3 rounded-md text-white font-semibold mt-4"
           >
             Saqlash
           </button>

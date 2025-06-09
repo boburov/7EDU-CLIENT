@@ -39,8 +39,8 @@ const UserPage = () => {
   return (
     <div className="container mx-auto pt-10 px-4 text-white">
       {user ? (
-        <div className="flex flex-col gap-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-sm">
+        <div className="flex flex-col gap-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
             <div className={cardBaseStyle}>
               <BookOpenCheck className="text-green-400 w-8 h-8" />
               <div>
@@ -65,7 +65,7 @@ const UserPage = () => {
               </div>
             </div>
 
-            <Link href="/settings" className={cardBaseStyle}>
+            <Link href="settings" className={cardBaseStyle}>
               <Settings className="text-yellow-400 w-8 h-8" />
               <div>
                 <p className="text-gray-300">Foydalanuvchi Sozlamalari</p>
