@@ -1,12 +1,9 @@
-import type { NextConfig } from "next";
+import { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-};
-
-module.exports = {
   experimental: {
-    turboMode: false,
-  },
-};
-
-export default nextConfig;
+    swcPlugins: [
+      ['next-font-loaders', {}]
+    ]
+  }
+}
