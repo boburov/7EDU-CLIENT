@@ -2,7 +2,7 @@ import axios from 'axios';
 import apiEndpoins from '../api.endpoin';
 
 const api = axios.create({
-    baseURL: 'http://localhost:3000/',
+    baseURL: 'https://sevenedu-server-4.onrender.com/',
 });
 
 api.interceptors.request.use((config) => {
@@ -21,23 +21,21 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        const message =
+        if (process.env.NODE_ENV === 'development') {
+            console.error("API Error:", error.response?.data?.message || error.message);
+        }
+
+        return Promise.reject(
             error.response?.data?.message ||
             error.message ||
-            "Noma'lum xatolik yuz berdi.";
-        console.error("API Error:", message);
-        return Promise.reject(message);
+            "Noma'lum xatolik yuz berdi."
+        );
     }
 );
 
 export const updateUserProfilePic = async (userId: string, formData: FormData) => {
-    try {
-        const response = await api.post(apiEndpoins.updateUserProfilePic(userId), formData);
-        return response.data;
-    } catch (error: any) {
-        console.error("API Error:", error.response?.data || error.message);
-        throw error;
-    }
+    const response = await api.post(apiEndpoins.updateUserProfilePic(userId), formData);
+    return response.data;
 };
 
 export const register = async (data: object) => {
@@ -59,13 +57,8 @@ export const login = async (data: object) => {
 };
 
 export const getMe = async () => {
-    try {
-        const res = await api.get(apiEndpoins.getMe);
-        return res.data;
-    } catch (error) {
-        console.log(error);
-        throw error;
-    }
+    const res = await api.get(apiEndpoins.getMe);
+    return res.data;
 };
 
 export const checkEmail = async (email: string) => {
@@ -82,78 +75,50 @@ export const checkEmail = async (email: string) => {
 
 export const getUserByEmail = async (email: string) => {
     try {
-        const res = await axios.get(`/auth/by-email?email=${encodeURIComponent(email)}`);
-
+        const res = await api.get(`/auth/by-email?email=${encodeURIComponent(email)}`);
         if (res.status === 404) return null;
-
-        // if (!res.ok) throw new Error('Server xatolik');
-
-        return await res.data
-    } catch (error) {
-        console.error('Email tekshirishda xatolik:', error);
+        return res.data;
+    } catch {
         return null;
     }
 };
 
 export const updateUser = async (id: string, data: object) => {
-    try {
-        const res = await api.patch(apiEndpoins.updateUser(id), data);
-        return res.data.user;
-    } catch (error) {
-        console.error("updateUser error:", error);
-        throw error;
-    }
+    const res = await api.patch(apiEndpoins.updateUser(id), data);
+    return res.data.user;
 };
 
-
 export const deleteUserProfilePic = async (userId: string) => {
-    try {
-        const response = await api.delete(`/user/deleteProfilePic/${userId}`);
-        return response.data;
-    } catch (error: any) {
-        console.error("API Error:", error.response?.data || error.message);
-        throw error;
-    }
+    const response = await api.delete(`/user/deleteProfilePic/${userId}`);
+    return response.data;
 };
 
 export const markNotificationAsRead = async (notificationRecipientId: string) => {
-    try {
-        const res = await api.put(`/notifications/${notificationRecipientId}`, { isRead: true });
-        return res.data;
-    } catch (error) {
-        console.error("markNotificationAsRead error:", error);
-        throw error;
-    }
+    const res = await api.put(`/notifications/${notificationRecipientId}`, { isRead: true });
+    return res.data;
 };
 
 export const forgotPassword = async (email: string) => {
     try {
         const res = await api.post('/auth/forgot-password', { email });
         return res.data;
-    } catch (error) {
-        console.error('forgotPassword error:', error);
+    } catch (error: any) {
+        if (error.response?.status === 404) {
+            throw new Error('Foydalanuvchi topilmadi');
+        }
         throw error;
     }
 };
 
-
-// courses
+// Courses
 export const allCourse = async () => {
-    try {
-        const allCourse = await api.get(apiEndpoins.allCourse);
-        return allCourse.data;
-    } catch (error) {
-        console.log(error);
-    }
+    const allCourse = await api.get(apiEndpoins.allCourse);
+    return allCourse.data;
 };
 
 export const GetCourseById = async (id: string) => {
-    try {
-        const res = await api.get(apiEndpoins.getCategory(id))
-        return res
-    } catch (error) {
-        console.log(error)
-    }
-}
+    const res = await api.get(apiEndpoins.getCategory(id));
+    return res;
+};
 
 export default api;

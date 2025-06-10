@@ -43,7 +43,7 @@ const Login = () => {
       setMsg("Yangi parol emailingizga yuborildi.");
       setForgotMode(false);
     } catch (error: any) {
-      setMsg(error.message || "Xatolik yuz berdi");
+      setMsg(error.message || "Email topilmadi");
     } finally {
       setLoading(false);
     }
