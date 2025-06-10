@@ -3,12 +3,12 @@
 import { getUserByEmail } from "@/app/api/service/api";
 import TwoFactorForm from "@/app/components/TwoFactor";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 const VerifyPage = () => {
-  
+
   const router = useRouter()
-  
+
   useEffect(() => {
     const email = localStorage.getItem("email");
     if (email) {

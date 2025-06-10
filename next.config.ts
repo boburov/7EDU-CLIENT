@@ -1,9 +1,6 @@
-import { NextConfig } from "next";
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    swcPlugins: [
-      ['next-font-loaders', {}]
-    ]
-  }
-}
+};
+
+export default nextConfig;
