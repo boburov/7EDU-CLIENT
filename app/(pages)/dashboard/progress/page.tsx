@@ -8,7 +8,7 @@ const page = () => {
       <div className="flex items-center justify-between gap-4 w-full rounded-2xl border border-amber-500/30 bg-amber-500/10 text-amber-500 px-6 py-4 shadow">
         <div className="flex items-center gap-5">
           <BookText width={42} height={42} strokeWidth={1.5} />
-          <p className="text-white text-lg font-semibold">Lug'at</p>
+          <p className="text-white text-lg font-semibold">{`Lug'at`}</p>
         </div>
         <span className="text-white/80 font-bold text-sm">30 / 100%</span>
       </div>

@@ -9,7 +9,7 @@ interface Course {
   id: string;
   title: string;
   thumbnail: string;
-  lessons: any[];
+  lessons: [];
   goal: string;
 }
 

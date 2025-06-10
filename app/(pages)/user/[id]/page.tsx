@@ -9,7 +9,7 @@ interface Course {
   id: string;
   title: string;
   thumbnail: string;
-  lessons: any[];
+  lessons: [];
   goal: string;
 }
 
@@ -83,7 +83,7 @@ const UserPage = () => {
                 href={`/kurs/${kurs.id}`}
                 className="px-3 py-1.5 bg-green-500 rounded-md flex items-center gap-2 text-xs"
               >
-                <Play size={18} /> Darslarni Ko'rish
+                <Play size={18} /> {`Darslarni Ko'rish`}
               </Link>
             </div>
           </li>
@@ -119,14 +119,14 @@ const UserPage = () => {
                   href={`/courses/${kurs.id}`} // kursga mos yo‘l berildi
                   className="px-3 py-1.5 bg-green-500 rounded-md flex items-center gap-2 text-xs"
                 >
-                  <Lock width={18} /> Demo Darslarni Ko'rish
+                  <Lock width={18} /> {`Demo Darslarni Ko'rish`}
                 </Link>
               </div>
             </li>
           ))}
         </ul>
       ) : (
-        <h2>Xozircha kurslar yo'q</h2>
+        <h2>{`Xozircha kurslar yo'q`}</h2>
       )}
     </section>
   );

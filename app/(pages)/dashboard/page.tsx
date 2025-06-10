@@ -1,8 +1,6 @@
 "use client"
 
 import {
-  BarChart,
-  Activity,
   Gift,
   Coins,
   UserCheck,

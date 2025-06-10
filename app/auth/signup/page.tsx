@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import edu7 from "@/app/images/7edu white logo.png";
 import { register } from "@/app/api/service/api";
+import { AxiosError } from "axios";
 
 const SignupPage = () => {
     const router = useRouter();
@@ -51,15 +52,21 @@ const SignupPage = () => {
                 setErrorMessage("Ro'yxatdan o'tishda xatolik yuz berdi");
             }
 
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Registration error:", error);
+
+            let message = "Ro'yxatdan o'tishda xatolik yuz berdi";
+
+            if (error instanceof AxiosError && error.response?.data?.message) {
+                message = error.response.data.message;
+            } else if (error instanceof Error) {
+                message = error.message;
+            }
+
             setError(true);
-            setErrorMessage(
-                error.response?.data?.message || 
-                error.message || 
-                "Ro'yxatdan o'tishda xatolik yuz berdi"
-            );
+            setErrorMessage(message);
         }
+
     };
 
     return (
@@ -155,7 +162,7 @@ const SignupPage = () => {
                     </form>
 
                     <Link href="/login" className="text-white/80 font-[robolight] tracking-wide underline">
-                        O'quvchi sifatida kirish
+                       {` O'quvchi sifatida kirish`}
                     </Link>
                 </div>
             </section>

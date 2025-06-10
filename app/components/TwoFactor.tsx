@@ -37,11 +37,16 @@ export default function TwoFactor() {
       const response = await verifyCode({ email, code: entered });
       setSuccess("Code verified successfully!");
       setTimeout(() => router.push(`/user/${response.user.id}`), 1000);
-    } catch (err: any) {
-      setError(err.message || "Invalid code. Please try again.");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Invalid code. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
+    
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, idx: number) => {
