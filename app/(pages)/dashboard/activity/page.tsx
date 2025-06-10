@@ -1,10 +1,10 @@
 import { CalendarDays, CalendarCheck, BarChart3 } from "lucide-react"
 
-const page = () => {
+const Page = () => {
   return (
     <div className="container text-white space-y-6 pt-6">
       <h1 className="text-2xl font-semibold flex items-center gap-3 text-center w-full">
-        O'quvchining Davomat Qismi
+        O&apos;quvchining Davomat Qismi
       </h1>
 
       <div className="flex items-center gap-5 w-full rounded-xl border border-gray-400/30 bg-gray-500/10 text-gray-300 px-6 py-5 shadow">
@@ -34,4 +34,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

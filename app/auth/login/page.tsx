@@ -18,36 +18,40 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setMsg("");
-
+  
     try {
       const data = await login({ email, password });
-
+  
       if (data) {
         const userId = data.checkId.userID;
         router.push(`/user/${userId}`);
       } else {
         setMsg("Login muvaffaqiyatsiz");
       }
-    } catch (error: any) {
-      console.log(error);
+    } catch (error) {
+      
+      const err = error as Error;
+      console.log(err.message);
       setMsg("Parol yoki email noto‘g‘ri");
     }
   };
 
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMsg("");
-    setLoading(true);
-    try {
-      await forgotPassword(email);
-      setMsg("Yangi parol emailingizga yuborildi.");
-      setForgotMode(false);
-    } catch (error: any) {
-      setMsg(error.message || "Email topilmadi");
-    } finally {
-      setLoading(false);
-    }
-  };
+ 
+const handleForgotPassword = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setMsg("");
+  setLoading(true);
+  try {
+    await forgotPassword(email);
+    setMsg("Yangi parol emailingizga yuborildi.");
+    setForgotMode(false);
+  } catch (error) {
+    const err = error as Error;
+    setMsg(err.message || "Email topilmadi");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <section className="container pt-5">

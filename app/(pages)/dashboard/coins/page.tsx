@@ -1,16 +1,11 @@
-"use client"
-import { getMe } from '@/app/api/service/api'
-import {
-  Activity,
-  BookOpenCheck,
-  ClipboardCheck,
-  Languages,
-  Coins,
-} from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+"use client";
+
+import { Coins, Activity, BookOpenCheck, ClipboardCheck, Languages } from "lucide-react"
+import React, { useEffect, useState } from "react"
+import { getMe } from "@/app/api/service/api"
 
 const Page = () => {
-  const [coins, setCoins] = useState("")
+  const [coins, setCoins] = useState(0)
 
   useEffect(() => {
     getMe().then((e) => {

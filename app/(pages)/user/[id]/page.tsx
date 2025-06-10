@@ -116,7 +116,7 @@ const UserPage = () => {
                   <strong>Maqsad: </strong> {kurs.goal}
                 </span>
                 <Link
-                  href={`/kurs/${kurs.id}`} // kursga mos yo‘l berildi
+                  href={`/courses/${kurs.id}`} // kursga mos yo‘l berildi
                   className="px-3 py-1.5 bg-green-500 rounded-md flex items-center gap-2 text-xs"
                 >
                   <Lock width={18} /> Demo Darslarni Ko'rish

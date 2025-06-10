@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Wallet, BookOpenCheck, Bell, Settings, Lock } from "lucide-react";
+import {  BookOpenCheck, Bell, Settings, Lock } from "lucide-react";
 import { allCourse, getMe } from "@/app/api/service/api";
 import Link from "next/link";
 

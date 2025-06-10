@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { BellRing, BookOpen, ChartArea, CircleUserIcon, Home, LayoutDashboard } from "lucide-react"
+import { BellRing, ChartArea, CircleUserIcon, Home, LayoutDashboard } from "lucide-react"
 import { getMe } from "@/app/api/service/api"
 
 interface NotificationContent {

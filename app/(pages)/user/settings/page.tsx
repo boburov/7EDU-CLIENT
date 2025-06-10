@@ -13,13 +13,20 @@ interface User {
   phonenumber: string;
 }
 
-function debounce<Func extends (...args: any[]) => void>(func: Func, wait: number) {
+function debounce<T extends (...args: Parameters<T>) => Promise<void>>(
+  func: T,
+  wait: number
+): (...args: Parameters<T>) => void {
   let timeout: ReturnType<typeof setTimeout>;
-  return (...args: Parameters<Func>) => {
+
+  return (...args: Parameters<T>) => {
     clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), wait);
+    timeout = setTimeout(() => {
+      void func(...args); // Promise qaytgani uchun void bilan uni handle qilamiz
+    }, wait);
   };
 }
+
 
 const isValidEmail = (email: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -38,11 +45,13 @@ const Page = () => {
         setEmailError(null);
         return;
       }
+  
       if (!isValidEmail(email)) {
         setEmailExists(false);
         setEmailError("Email formati noto‘g‘ri");
         return;
       }
+  
       try {
         const existingUser = await checkEmail(email);
         if (existingUser.exists) {
@@ -57,14 +66,17 @@ const Page = () => {
           setEmailExists(false);
           setEmailError(null);
         }
-      } catch (error: any) {
+      } catch (error) {
+        const err = error as { message?: string };
         setEmailExists(false);
-        setEmailError(error.message || "Email tekshirishda xatolik yuz berdi");
+        setEmailError(err.message || "Email tekshirishda xatolik yuz berdi");
       }
     }, 500),
     [user]
   );
+  
 
+  
   useEffect(() => {
     getMe()
       .then(setUser)
@@ -164,7 +176,6 @@ const Page = () => {
           required
           error={emailExists || emailError ? emailError : null}
           errorHighlight={emailExists || Boolean(emailError)}
-
         />
         <InputField
           id="phonenumber"

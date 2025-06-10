@@ -65,12 +65,14 @@ export const checkEmail = async (email: string) => {
     try {
         const res = await api.get(`user/check?email=${encodeURIComponent(email)}`);
         return res.data;
-    } catch (err: any) {
-        if (err.response?.status === 400) {
+    } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          if (err.response?.status === 400) {
             return { exists: true };
+          }
         }
         throw new Error('Email tekshirishda xatolik');
-    }
+      }
 };
 
 export const getUserByEmail = async (email: string) => {
@@ -104,12 +106,15 @@ export const forgotPassword = async (email: string) => {
     try {
         const res = await api.post('/auth/forgot-password', { email });
         return res.data;
-    } catch (error: any) {
-        if (error.response?.status === 404) {
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+          if (error.response?.status === 404) {
             throw new Error('Foydalanuvchi topilmadi');
+          }
         }
         throw error;
-    }
+      }
+      
 };
 
 // Courses

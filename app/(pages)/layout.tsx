@@ -1,17 +1,17 @@
 "use client";
 
 import Footer from "./pages_components/Footer";
-import { CircleArrowLeft, DollarSign, PiggyBank, Trash, Wallet2 } from "lucide-react";
+import { CircleArrowLeft, Trash, Wallet2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, ChangeEvent } from "react";
 import { deleteUserProfilePic, getMe, updateUserProfilePic } from "../api/service/api";
-import { SessionProvider } from "next-auth/react";
+import Image from "next/image";
 
 interface User {
   id: string;
   name: string;
   profilePic?: string;
-  courses: any[];
+  courses: unknown[]; 
   email: string;
   phonenumber: string;
   coins: number;
@@ -30,11 +30,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           router.push('/auth/login');
           return;
         }
+
         const userData = await getMe();
         setUser(userData);
 
-      } catch (error: any) {
-        if (error?.response?.status === 401 || error.message === 'Token bekor qilindi') {
+      } catch (error: unknown) {
+        const err = error as { response?: { status: number }; message?: string };
+        if (err?.response?.status === 401 || err.message === 'Token bekor qilindi') {
           router.push('/auth/signup');
         } else {
           console.error("Foydalanuvchi ma'lumotini olishda xatolik:", error);
@@ -49,12 +51,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     return num.toLocaleString('en-US');
   }
 
-
   const onProfilePicClick = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
 
@@ -63,7 +64,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       formData.append('profilePic', file);
 
       const updatedUser = await updateUserProfilePic(user.id, formData);
-
       setUser(updatedUser);
 
     } catch (error) {
@@ -81,26 +81,26 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-
   return (
     <>
-      <div
-        onClick={() => router.back()}
-      >
+      <div onClick={() => router.back()}>
         <CircleArrowLeft size={50} strokeWidth={1} className="mx-4 mt-4 text-white" />
       </div>
 
       {user && (
         <section className="container text-white pt-10 relative">
-          <div className="flex items-center gap-3 mb-4 cursor-pointer" onClick={onProfilePicClick}>
+          <div
+            className="flex items-center gap-3 mb-4 cursor-pointer"
+            onClick={onProfilePicClick}
+          >
             {user.profilePic ? (
               <div className="relative w-20 h-20">
-                <img
+                <Image
                   src={user.profilePic}
-                  width={120}
-                  height={120}
                   alt="user image"
-                  className="rounded-full border-2 border-white/5 p-1 bg-gray-500 object-cover w-full h-full"
+                  fill
+                  className="rounded-full border-2 border-white/5 p-1 bg-gray-500 object-cover"
+                  sizes="80px"
                 />
                 <button
                   onClick={(e) => {
@@ -125,14 +125,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </div>
             )}
 
-            <div className="flex flex-col items-start space-y-">
+            <div className="flex flex-col items-start">
               <h2 className="text-xl font-semibold">{user.name}</h2>
               <span className="text-sm text-gray-300">{user.email}</span>
               <div className="mt-1 inline-flex items-end gap-2 bg-yellow-100 text-gray-900 px-3 py-0.5 rounded-full text-sm font-medium">
                 <Wallet2 width={20} /> {formatNumberWithCommas(user.coins)} tanga
               </div>
             </div>
-
           </div>
         </section>
       )}
