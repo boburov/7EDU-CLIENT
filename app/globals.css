@@ -21,7 +21,7 @@
 }
 
 body {
-  @apply min-h-screen bg-gradient-to-b from-[#f4f4f4] via-[#d7e8cc] to-[#eaeaea] dark:from-[#0e0f0e] dark:via-[#1e2916] dark:to-[#161616] font-[robobold];
+  @apply min-h-screen bg-gradient-to-b  from-[#0e0f0e] via-[#1e2916] to-[#161616] font-[robobold];
 }
 
 .container {
