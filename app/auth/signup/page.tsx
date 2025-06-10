@@ -19,30 +19,47 @@ const SignupPage = () => {
         password: "",
     });
     const [isError, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
     const handleSignup = async () => {
         setError(false);
+        setErrorMessage("");
+        
         if (!userData.name || !userData.surname || !userData.email || !userData.password) {
             setError(true);
+            setErrorMessage("Iltimos, barcha maydonlarni to'ldiring");
+            return;
+        }
+
+        if (!/^\S+@\S+\.\S+$/.test(userData.email)) {
+            setError(true);
+            setErrorMessage("Iltimos, to'g'ri email manzil kiriting");
             return;
         }
 
         try {
-
             const res = await register(userData);
+            
             if (res.token) {
-                router.push('verify')
-                localStorage.setItem("email", userData.email)
-                console.log(res.token);
-
+                localStorage.setItem("email", userData.email);
+                localStorage.setItem("token", res.token);
+                router.push('verify');
+            } else {
+                setError(true);
+                setErrorMessage("Ro'yxatdan o'tishda xatolik yuz berdi");
             }
 
-        } catch (error) {
-            console.log(error)
+        } catch (error: any) {
+            console.error("Registration error:", error);
+            setError(true);
+            setErrorMessage(
+                error.response?.data?.message || 
+                error.message || 
+                "Ro'yxatdan o'tishda xatolik yuz berdi"
+            );
         }
-
     };
 
     return (
@@ -57,9 +74,9 @@ const SignupPage = () => {
                     <h3 className="text-2xl font-bold text-white mb-5">Mehmon Sifatida Kirish</h3>
 
                     {isError && (
-                        <h1 className="text-red-500 mb-4">
-                            Ma'lumotlar noto'g'ri yoki Email allaqachon ishlatilmoqda.
-                        </h1>
+                        <div className="text-red-500 mb-4 text-center">
+                            {errorMessage}
+                        </div>
                     )}
 
                     <form
@@ -105,7 +122,6 @@ const SignupPage = () => {
                             autoComplete="off"
                             placeholder="Telefon raqam"
                             value={userData.phonenumber}
-                            // pattern="^\+?998(9[0-9]|3[3]|7[1]|8[8]|5[5]|6[1]|7[0]|9[1])\d{7}$"
                             onChange={(e) => setUserData({ ...userData, phonenumber: e.target.value })}
                             className="autofill:bg-white/10 w-full h-14 border rounded-md border-white/20 text-white px-3 bg-white/10"
                         />
@@ -118,6 +134,7 @@ const SignupPage = () => {
                                 value={userData.password}
                                 onChange={(e) => setUserData({ ...userData, password: e.target.value })}
                                 type={showPassword ? "text" : "password"}
+                                minLength={6}
                                 className="autofill:bg-white/10 w-full h-14 border rounded-md border-white/20 text-white px-3 bg-white/10"
                             />
                             <button

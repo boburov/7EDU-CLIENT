@@ -1,7 +1,7 @@
 "use client";
 
 import { allCourse, GetCourseById, getMe } from "@/app/api/service/api";
-import { Lock, Play } from "lucide-react";
+import { Lock} from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -33,7 +33,7 @@ const page = () => {
             try {
                 const [allCoursesData, meData] = await Promise.all([allCourse(), getMe()]);
                 setCourses(allCoursesData);
-                setUser(meData); // foydalanuvchini ham saqlaymiz
+                setUser(meData);
 
                 const courseIds = meData.courses || [];
 

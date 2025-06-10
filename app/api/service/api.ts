@@ -75,7 +75,9 @@ export const checkEmail = async (email: string) => {
 
 export const getUserByEmail = async (email: string) => {
     try {
-        const res = await api.get(`/auth/by-email?email=${encodeURIComponent(email)}`);
+        const res = await api.get(`/user/by-email`,{
+            params:{email}
+        });
         if (res.status === 404) return null;
         return res.data;
     } catch {
