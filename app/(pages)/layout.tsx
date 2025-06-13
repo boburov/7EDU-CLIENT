@@ -95,10 +95,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           >
             {user.profilePic ? (
               <div className="relative w-20 h-20">
-                <Image
+                <img
                   src={user.profilePic}
                   alt="user image"
-                  fill
                   className="rounded-full border-2 border-white/5 p-1 bg-gray-500 object-cover"
                   sizes="80px"
                 />

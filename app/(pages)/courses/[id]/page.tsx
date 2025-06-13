@@ -23,7 +23,9 @@ const Page = () => {
   useEffect(() => {
     if (!courseId) return
     GetCourseById(String(courseId)).then((res) => {
-      setLessons(res?.data.lessons || [])
+      setLessons(res?.lessons || [])
+      console.log(res);
+      
     })
   }, [courseId])
 

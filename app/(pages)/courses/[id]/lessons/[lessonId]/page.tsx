@@ -14,6 +14,7 @@ import {
   ListChecks,
   MessageCircleQuestion,
 } from "lucide-react";
+import Link from "next/link";
 
 interface Lesson {
   title: string
@@ -222,45 +223,45 @@ const Page = () => {
 
       <div className="space-y-4">
 
-        <div className="w-full h-24 bg-yellow-400/10 border border-yellow-600 flex items-center gap-5 px-5 text-yellow-400 rounded-md hover:scale-[1.02] transition-all duration-300 shadow-sm">
+        <Link href={`${lessonId}/vocabulary`} className="w-full h-20 bg-yellow-400/10 border border-yellow-600 flex items-center gap-5 px-5 text-yellow-400 rounded-md hover:scale-[1.02] transition-all duration-300 shadow-sm">
           <div className="text-3xl">
-            <Languages size={50} strokeWidth={1} />
+            <Languages size={30} strokeWidth={1} />
           </div>
           <div>
             <div className="text-lg font-semibold">{`Lug'at`}</div>
             <div className="text-sm text-yellow-300">{`Yangi so'zlarni yodlang va mashq qiling`}</div>
           </div>
-        </div>
+        </Link>
 
-        <div className="w-full h-24 bg-purple-400/10 border border-purple-700 flex items-center gap-5 px-5 text-purple-400 rounded-md hover:scale-[1.02] transition-all duration-300 shadow-sm">
+        <Link href={`${lessonId}/test`} className="w-full h-20 bg-purple-400/10 border border-purple-700 flex items-center gap-5 px-5 text-purple-400 rounded-md hover:scale-[1.02] transition-all duration-300 shadow-sm">
           <div className="text-3xl">
-            <ListChecks size={50} strokeWidth={1} />
+            <ListChecks size={30} strokeWidth={1} />
           </div>
           <div>
             <div className="text-lg font-semibold">Test</div>
             <div className="text-sm text-purple-300">{`Bilimingizni tekshiring va yutuqlaringizni ko‘ring`}</div>
           </div>
-        </div>
+        </Link>
 
-        <div className="w-full h-24 bg-blue-400/10 border border-blue-700 flex items-center gap-5 px-5 text-blue-400 rounded-md hover:scale-[1.02] transition-all duration-300 shadow-sm">
+        <Link href={`${lessonId}/quiz`.toLowerCase()} className="w-full h-20 bg-blue-400/10 border border-blue-700 flex items-center gap-5 px-5 text-blue-400 rounded-md hover:scale-[1.02] transition-all duration-300 shadow-sm">
           <div className="text-3xl">
-            <ListChecks size={50} strokeWidth={1} />
+            <ListChecks size={30} strokeWidth={1} />
           </div>
           <div>
             <div className="text-lg font-semibold">Savollar</div>
             <div className="text-sm text-blue-300">{`Tushunmagan joylaringizni takror ko‘rib chiqing`}</div>
           </div>
-        </div>
+        </Link>
 
-        <div className="w-full h-24 bg-emerald-400/10 border border-emerald-700 flex items-center gap-5 px-5 text-emerald-400 rounded-md hover:scale-[1.02] transition-all duration-300 shadow-sm">
+        <Link href={`${lessonId}/ask-for-ai`.toLowerCase()} className="w-full h-20 bg-emerald-400/10 border border-emerald-700 flex items-center gap-5 px-5 text-emerald-400 rounded-md hover:scale-[1.02] transition-all duration-300 shadow-sm">
           <div className="text-3xl">
-            <MessageCircleQuestion size={50} strokeWidth={1} />
+            <MessageCircleQuestion size={30} strokeWidth={1} />
           </div>
           <div>
             <div className="text-lg font-semibold">{`Ustozdan so‘rash`}</div>
             <div className="text-sm text-emerald-300">{`Savolingizni ustozga bevosita yuboring`}</div>
           </div>
-        </div>
+        </Link>
 
       </div>
 

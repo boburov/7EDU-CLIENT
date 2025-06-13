@@ -1,6 +1,6 @@
 "use client";
 
-import { allCourse, GetCourseById, getMe } from "@/app/api/service/api";
+import { allCourse, GetCourseById, GetLessonsById, getMe } from "@/app/api/service/api";
 import { Lock, Play } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -25,7 +25,6 @@ interface User {
 
 const UserPage = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [checkCourse, setCkeckCourses] = useState(false)
   const [courses, setCourses] = useState<Course[]>([]);
   const [userCourses, setUserCourses] = useState<Course[]>([]);
 
@@ -33,23 +32,19 @@ const UserPage = () => {
     const fetchAll = async () => {
       try {
         getMe().then((data) => {
-          console.log(data.courses);
+          data.courses.map((courseId: any) => {
+            GetCourseById(courseId.courseId).then((ddd) => {
+              setUserCourses([ddd])
+            })
+          })
         })
 
         const [allCoursesData, meData] = await Promise.all([allCourse(), getMe()]);
         setCourses(allCoursesData);
         setUser(meData);
 
-        const courseIds = meData.courses || [];
 
-        const coursePromises = courseIds.map((id: string) => GetCourseById(String(id)));
-        const courseResults = await Promise.all(coursePromises);
 
-        const filteredCourses = courseResults
-          .map((res) => res?.data)
-          .filter((course): course is Course => Boolean(course));
-
-        setUserCourses(filteredCourses);
       } catch (e) {
         console.error("fetchAll error:", e);
       }
@@ -58,14 +53,12 @@ const UserPage = () => {
     fetchAll();
   }, []);
 
-  console.log(userCourses);
-  
   return (
     <section className="container p-5 text-white">
       <h1 className="text-xl mb-1">Kurslarim soni: {user?.courses?.length ?? 0}</h1>
       <ul className="space-y-4 mb-7">
-        {userCourses.map((kurs) => (
-          <li
+        {userCourses.map((kurs) => {
+          return (<li
             key={kurs.id}
             className="flex items-center justify-between gap-4 px-2 py-2 bg-white/15 border border-white/15 text-white rounded-2xl transition-transform hover:scale-105"
           >
@@ -86,14 +79,14 @@ const UserPage = () => {
                 <strong>Maqsad: </strong> {kurs.goal}
               </span>
               <Link
-                href={`/kurs/${kurs.id}`}
+                href={`/courses/${kurs.id}`}
                 className="px-3 py-1.5 bg-green-500 rounded-md flex items-center gap-2 text-xs"
               >
                 <Play size={18} /> {`Darslarni Ko'rish`}
               </Link>
             </div>
-          </li>
-        ))}
+          </li>)
+        })}
       </ul>
 
       <h1 className="text-2xl font-bold mb-4">Barcha Kurslar</h1>

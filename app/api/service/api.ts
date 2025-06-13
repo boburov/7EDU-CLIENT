@@ -2,7 +2,7 @@ import axios from 'axios';
 import apiEndpoins from '../api.endpoin';
 
 const api = axios.create({
-    baseURL: 'https://sevenedu-server-4.onrender.com/',
+    baseURL: 'http://localhost:3000/',
 });
 
 api.interceptors.request.use((config) => {
@@ -21,27 +21,27 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-      if (process.env.NODE_ENV === 'production') {
+        if (process.env.NODE_ENV === 'production') {
 
-        const data = { ...error.response?.data };
-        if (data?.pin) data.pin = "***";
-        if (data?.token) data.token = "***";
-        if (data?.password) data.password = "***";
-  
-        console.error("API Error:", data?.message || error.message || "Noma'lum xatolik yuz berdi.");
-      } else {
+            const data = { ...error.response?.data };
+            if (data?.pin) data.pin = "***";
+            if (data?.token) data.token = "***";
+            if (data?.password) data.password = "***";
 
-        console.error(error);
-      }
-  
-      return Promise.reject(
-        error.response?.data?.message ||
-        error.message ||
-        "Noma'lum xatolik yuz berdi."
-      );
+            console.error("API Error:", data?.message || error.message || "Noma'lum xatolik yuz berdi.");
+        } else {
+
+            console.error(error);
+        }
+
+        return Promise.reject(
+            error.response?.data?.message ||
+            error.message ||
+            "Noma'lum xatolik yuz berdi."
+        );
     }
-  );
-  
+);
+
 
 export const updateUserProfilePic = async (userId: string, formData: FormData) => {
     const response = await api.post(apiEndpoins.updateUserProfilePic(userId), formData);
@@ -77,18 +77,18 @@ export const checkEmail = async (email: string) => {
         return res.data;
     } catch (err: unknown) {
         if (axios.isAxiosError(err)) {
-          if (err.response?.status === 400) {
-            return { exists: true };
-          }
+            if (err.response?.status === 400) {
+                return { exists: true };
+            }
         }
         throw new Error('Email tekshirishda xatolik');
-      }
+    }
 };
 
 export const getUserByEmail = async (email: string) => {
     try {
-        const res = await api.get(`/user/by-email`,{
-            params:{email}
+        const res = await api.get(`/user/by-email`, {
+            params: { email }
         });
         if (res.status === 404) return null;
         return res.data;
@@ -118,13 +118,13 @@ export const forgotPassword = async (email: string) => {
         return res.data;
     } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
-          if (error.response?.status === 404) {
-            throw new Error('Foydalanuvchi topilmadi');
-          }
+            if (error.response?.status === 404) {
+                throw new Error('Foydalanuvchi topilmadi');
+            }
         }
         throw error;
-      }
-      
+    }
+
 };
 
 // Courses
@@ -135,10 +135,10 @@ export const allCourse = async () => {
 
 export const GetCourseById = async (id: string) => {
     const res = await api.get(apiEndpoins.getCategory(id));
-    return res;
+    return res.data;
 };
 
-export const GetLessonsById=async(id:string)=>{
+export const GetLessonsById = async (id: string) => {
     const res = await api.get(apiEndpoins.getLessonById(id))
     return res.data
 }

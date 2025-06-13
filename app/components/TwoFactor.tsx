@@ -11,7 +11,7 @@ export default function TwoFactor() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
-  
+
   const email = typeof window !== 'undefined' ? localStorage.getItem("email") : "";
 
   const handleChange = (val: string, idx: number) => {
@@ -28,7 +28,7 @@ export default function TwoFactor() {
       setError("Please enter a 6-digit code.");
       return;
     }
-    
+
     setError("");
     setSuccess("");
     setLoading(true);
@@ -46,7 +46,7 @@ export default function TwoFactor() {
     } finally {
       setLoading(false);
     }
-    
+
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, idx: number) => {
@@ -57,33 +57,32 @@ export default function TwoFactor() {
 
   return (
     <div className="px-4 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-center">Two-Factor Authentication</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center text-white">Emailigizga kelgan tasdiqlash kodini kiriting</h1>
       {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
       {success && <p className="text-green-500 mb-4 text-center">{success}</p>}
-      
+
       <div className="grid grid-cols-6 gap-3 mb-6">
         {code.map((ch, i) => (
           <input
             key={i}
-            ref={el => {refs.current[i] = el}}
+            ref={el => { refs.current[i] = el }}
             maxLength={1}
             value={ch}
             onChange={e => handleChange(e.target.value, i)}
             onKeyDown={e => handleKeyDown(e, i)}
             inputMode="text"
-            className="h-20 w-full rounded-md bg-black/30 text-center text-xl border border-black/50 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+            className="h-20 w-full rounded-md bg-black/30 text-center text-xl border border-black/50 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-white"
             disabled={loading}
           />
         ))}
       </div>
-      
+
       <div className="flex gap-3">
         <button
           onClick={checkCode}
           disabled={loading}
-          className={`flex-1 uppercase text-white h-12 rounded-xs ${
-            loading ? 'bg-gray-400' : 'bg-black/80 border border-black/70 hover:bg-black'
-          }`}
+          className={`flex-1 uppercase text-white h-12 rounded-xs ${loading ? 'bg-gray-400' : 'bg-black/80 border border-black/70 hover:bg-black'
+            }`}
         >
           {loading ? 'Verifying...' : 'Verify'}
         </button>
