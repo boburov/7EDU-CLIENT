@@ -138,4 +138,9 @@ export const GetCourseById = async (id: string) => {
     return res;
 };
 
+export const GetLessonsById=async(id:string)=>{
+    const res = await api.get(apiEndpoins.getLessonById(id))
+    return res.data
+}
+
 export default api;

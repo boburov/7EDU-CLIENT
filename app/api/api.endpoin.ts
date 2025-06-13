@@ -17,6 +17,7 @@ const apiEndpoins = {
   allCourse: `${main_url.course}/all`,
   getCategory: (id: string) => `${main_url.course}/category/${id}`,
   addLesson: (id: string) => `${main_url.course}/category/${id}/newlesson`,
+  getLessonById: (id: string) => `${main_url.course}/lessons/${id}`,
 
   oneQuiz: (id: string) => `${main_url.quiz}/${id}`,
   deleteQuiz: (id: string) => `${main_url.quiz}/${id}`,

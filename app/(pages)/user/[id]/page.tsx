@@ -25,15 +25,20 @@ interface User {
 
 const UserPage = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [checkCourse, setCkeckCourses] = useState(false)
   const [courses, setCourses] = useState<Course[]>([]);
   const [userCourses, setUserCourses] = useState<Course[]>([]);
 
   useEffect(() => {
     const fetchAll = async () => {
       try {
+        getMe().then((data) => {
+          console.log(data.courses);
+        })
+
         const [allCoursesData, meData] = await Promise.all([allCourse(), getMe()]);
         setCourses(allCoursesData);
-        setUser(meData); // foydalanuvchini ham saqlaymiz
+        setUser(meData);
 
         const courseIds = meData.courses || [];
 
@@ -42,7 +47,7 @@ const UserPage = () => {
 
         const filteredCourses = courseResults
           .map((res) => res?.data)
-          .filter((course): course is Course => Boolean(course)); // Tip xavfsizligi
+          .filter((course): course is Course => Boolean(course));
 
         setUserCourses(filteredCourses);
       } catch (e) {
@@ -53,7 +58,8 @@ const UserPage = () => {
     fetchAll();
   }, []);
 
-
+  console.log(userCourses);
+  
   return (
     <section className="container p-5 text-white">
       <h1 className="text-xl mb-1">Kurslarim soni: {user?.courses?.length ?? 0}</h1>
