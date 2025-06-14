@@ -143,4 +143,17 @@ export const GetLessonsById = async (id: string) => {
     return res.data
 }
 
+
+// ai usage
+
+export const sendrequestForAI = async (lessonId: string, message: string) => {
+    const res = await api.post("/user/chat", {
+        lessonId,
+        message,
+    });
+
+    return res.data
+}
+
+
 export default api;

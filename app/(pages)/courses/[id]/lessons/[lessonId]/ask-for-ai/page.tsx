@@ -3,28 +3,29 @@
 import { Send } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import axios from "axios";
-import api, { getMe } from "@/app/api/service/api";
+import api, { getMe, sendrequestForAI } from "@/app/api/service/api";
+
+type Message = {
+  role: "user" | "ai";
+  text: string;
+};
 
 const ChatWidget = () => {
-  const { lessonId } = useParams();
+  const { lessonId } = useParams() as { lessonId: string };
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [response, setResponse] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
   const [credit, setCredit] = useState<number>(10);
   const [userId, setUserId] = useState<string | null>(null);
 
-
   const fetchUser = async () => {
     try {
-      const res = await getMe().then((e) => {
-        setUserId(e.id);
-      })
+      const me = await getMe();
+      setUserId(me.id);
     } catch (err) {
       console.error("Foydalanuvchini olishda xatolik:", err);
     }
   };
-
 
   const fetchCredit = async (uid: string) => {
     try {
@@ -35,17 +36,18 @@ const ChatWidget = () => {
     }
   };
 
-
   const sendMessage = async () => {
     if (!message.trim() || loading || credit <= 0 || !userId) return;
+
+    const newUserMessage: Message = { role: "user", text: message };
+    setMessages((prev) => [...prev, newUserMessage]);
     setLoading(true);
+    setMessage("");
+
     try {
-      const res = await api.post("user/chat", {
-        lessonId,
-        message,
-      });
-      setResponse(res.data.answer);
-      setMessage("");
+      const data = await sendrequestForAI(lessonId, message);
+      const newAIMessage: Message = { role: "ai", text: data.answer };
+      setMessages((prev) => [...prev, newAIMessage]);
       fetchCredit(userId);
     } catch (err: any) {
       alert(err.response?.data?.message || "Xatolik yuz berdi");
@@ -53,7 +55,6 @@ const ChatWidget = () => {
       setLoading(false);
     }
   };
-
 
   useEffect(() => {
     fetchUser();
@@ -67,11 +68,26 @@ const ChatWidget = () => {
 
   return (
     <div className="fixed bottom-[90px] right-2 z-50 w-[96%] max-w-[500px] shadow-2xl">
-      <div className="p-3 bg-[#1f1f1f] rounded-t-xl border border-[#3f3f3f] text-white">
+      <div className="p-3 bg-[#1f1f1f] rounded-t-xl border border-[#3f3f3f] text-white max-h-[70vh] overflow-y-auto space-y-3">
         <div className="text-sm mb-2 text-gray-400">
           {userId ? `AI kredit: ${credit}/10` : "Yuklanmoqda..."}
         </div>
-        <div className="flex items-center gap-2">
+
+        <div className="flex flex-col gap-2">
+          {messages.map((msg, idx) => (
+            <div
+              key={idx}
+              className={`max-w-[80%] px-4 py-2 rounded-xl text-sm whitespace-pre-wrap ${msg.role === "user"
+                ? "bg-blue-500 self-end text-white"
+                : "bg-gray-700 self-start text-green-400"
+                }`}
+            >
+              {msg.text}
+            </div>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2 mt-4">
           <input
             type="text"
             placeholder="AI ga xabar yozing..."
@@ -88,11 +104,6 @@ const ChatWidget = () => {
             <Send size={20} color="white" />
           </button>
         </div>
-        {response && (
-          <div className="mt-4 text-sm text-green-400 whitespace-pre-wrap">
-            {response}
-          </div>
-        )}
       </div>
     </div>
   );
