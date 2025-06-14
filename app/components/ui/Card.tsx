@@ -24,7 +24,6 @@ export function Card({
       )}
       {...props}
     >
-      {/* Icon va Header */}
       {(icon || header) && (
         <div className="flex items-center justify-between mb-4">
           {icon && <div className="text-2xl">{icon}</div>}
@@ -32,10 +31,8 @@ export function Card({
         </div>
       )}
 
-      {/* Main content */}
       <div>{children}</div>
 
-      {/* Footer (optional) */}
       {footer && <div className="mt-4 border-t border-white/10 pt-3">{footer}</div>}
     </div>
   );

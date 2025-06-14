@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { CheckCircle2, XCircle } from "lucide-react";
 import api from "@/app/api/service/api";
 import confetti from "canvas-confetti";
@@ -20,6 +20,7 @@ export default function TestPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const [results, setResults] = useState<boolean[]>([]);
   const [finished, setFinished] = useState(false);
+  const stayback = useRouter()
 
   const launchConfetti = () => {
     confetti({
@@ -82,6 +83,7 @@ export default function TestPage() {
             <p>
               {results.filter(Boolean).length} / {tests.length} to‘g‘ri javob
             </p>
+            <span onClick={() => { stayback.back() }} className="px-7 py-3 bg-green-600 rounded-md cursor-pointer">Bosh Fahifaga qaytish</span>
           </div>
         ) : (
           <>
