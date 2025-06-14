@@ -24,8 +24,6 @@ const Page = () => {
     if (!courseId) return
     GetCourseById(String(courseId)).then((res) => {
       setLessons(res?.lessons || [])
-      console.log(res);
-      
     })
   }, [courseId])
 
@@ -37,46 +35,58 @@ const Page = () => {
           animate={{ opacity: 1 }}
           className="text-center text-white text-xl font-medium mt-10"
         >
-          Hozircha darslar mavjud emas 😢 <br />
+          Hozircha darslar mavjud emas <br />
           Ammo tez orada ular sizni kutmoqda!
         </motion.div>
       ) : (
         <div className="space-y-6">
-          {lessons.map((lesson, index) => (
-            <Link
-              key={index}
-              href={`${courseId}/lessons/${lesson.id}`}
-              className="block">
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="flex items-center justify-between bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-5 hover:scale-[1.01] transition-transform duration-300"
-              >
-                <div>
-                  <h2 className="text-white text-xl font-semibold mb-1">
-                    {index + 1}-dars: <span className="text-green-600">{lesson.title}</span>
-                  </h2>
-                  <p className="text-white/70 text-sm robo-light">
-                    Katta orzular katta qurbonlik talab qiladi ✨
-                  </p>
-                </div>
+          {lessons.map((lesson, index) => {
+            const isLocked = lesson.isDemmo === true;
+            const url = isLocked
+              ? "https://t.me/YOUR_ADMIN_USERNAME"
+              : `${courseId}/lessons/${lesson.id}`;
 
-                <div className="flex items-center gap-2">
-                  {lesson.isDemmo ? (
-                    <div className="flex flex-col items-center">
-                      <Lock className="w-10 h-10 text-red-400" />
-                      <span className="text-sm text-white/60">Qulflangan</span>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center">
-                      <Play className="w-10 h-10 text-green-400" />
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            </Link>
-          ))}
+            const Wrapper = isLocked ? "a" : Link;
+
+            return (
+              <Wrapper
+                key={index}
+                href={url}
+                target={isLocked ? "_blank" : undefined}
+                className="block"
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="flex items-center justify-between bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-5 hover:scale-[1.01] transition-transform duration-300"
+                >
+                  <div>
+                    <h2 className="text-white text-xl font-semibold mb-1">
+                      {index + 1}-dars:{" "}
+                      <span className="text-green-600">{lesson.title}</span>
+                    </h2>
+                    <p className="text-white/70 text-sm robo-light">
+                      Katta orzular katta qurbonlik talab qiladi ✨
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col items-center">
+                    {isLocked ? (
+                      <>
+                        <Lock className="w-10 h-10 text-red-400" />
+                        <span className="text-sm text-white/60">Qulflangan</span>
+                      </>
+                    ) : (
+                      <>
+                        <Play className="w-10 h-10 text-green-400" />
+                      </>
+                    )}
+                  </div>
+                </motion.div>
+              </Wrapper>
+            );
+          })}
         </div>
       )}
     </div>
