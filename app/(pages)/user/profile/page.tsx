@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {  BookOpenCheck, Bell, Settings, Lock } from "lucide-react";
+import { BookOpenCheck, Bell, Settings, Lock } from "lucide-react";
 import { allCourse, getMe } from "@/app/api/service/api";
 import Link from "next/link";
+import CertificateGenerator from "@/app/components/Certeficate";
 
 interface Course {
   id: string;
@@ -34,7 +35,8 @@ const UserPage = () => {
       .catch((e) => console.error("getMe error:", e));
   }, []);
 
-  const cardBaseStyle = "transition-all duration-300 ease-in-out transform hover:scale-[1.03] bg-gradient-to-br from-white/10 to-white/5 hover:from-white/20 hover:to-white/10 p-5 rounded-2xl flex items-center gap-4 shadow-md border border-white/10";
+  const cardBaseStyle =
+    "transition-all duration-300 ease-in-out transform hover:scale-[1.03] bg-gradient-to-br from-white/10 to-white/5 hover:from-white/20 hover:to-white/10 p-5 rounded-2xl flex items-center gap-4 shadow-md border border-white/10";
 
   return (
     <div className="container mx-auto pt-10 px-4 text-white">
@@ -45,7 +47,9 @@ const UserPage = () => {
               <BookOpenCheck className="text-green-400 w-8 h-8" />
               <div>
                 <p className="text-gray-300">Kurslar soni</p>
-                <p className="font-semibold text-white">{user.courses.length} ta</p>
+                <p className="font-semibold text-white">
+                  {user.courses.length} ta
+                </p>
               </div>
             </div>
 
@@ -69,7 +73,9 @@ const UserPage = () => {
               <Settings className="text-yellow-400 w-8 h-8" />
               <div>
                 <p className="text-gray-300">Foydalanuvchi Sozlamalari</p>
-                <p className="font-semibold text-white">Profilingizni tahrirlashingiz mumkin</p>
+                <p className="font-semibold text-white">
+                  Profilingizni tahrirlashingiz mumkin
+                </p>
               </div>
             </Link>
 
@@ -77,7 +83,9 @@ const UserPage = () => {
               <Lock className="text-gray-400 w-8 h-8" />
               <div>
                 <p className="text-gray-300">Parol Menejment</p>
-                <p className="font-semibold text-white">Parolingizni o‘zgartirishingiz mumkin</p>
+                <p className="font-semibold text-white">
+                  Parolingizni o‘zgartirishingiz mumkin
+                </p>
               </div>
             </Link>
           </div>
@@ -85,6 +93,11 @@ const UserPage = () => {
       ) : (
         <p className="text-center text-gray-400">Yuklanmoqda...</p>
       )}
+
+      {/* <CertificateGenerator
+        name={String(user?.name)}
+        course={String(user?.courses[0].title)}
+      /> */}
     </div>
   );
 };

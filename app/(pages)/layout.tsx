@@ -4,14 +4,19 @@ import Footer from "./pages_components/Footer";
 import { CircleArrowLeft, Trash, Wallet2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef, ChangeEvent } from "react";
-import { deleteUserProfilePic, getMe, updateUserProfilePic } from "../api/service/api";
+import {
+  deleteUserProfilePic,
+  getMe,
+  updateUserProfilePic,
+} from "../api/service/api";
 import Image from "next/image";
+import CertificateGenerator from "../components/Certeficate";
 
 interface User {
   id: string;
   name: string;
   profilePic?: string;
-  courses: unknown[]; 
+  courses: unknown[];
   email: string;
   phonenumber: string;
   coins: number;
@@ -25,19 +30,24 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         if (!token) {
-          router.push('/auth/login');
+          router.push("/auth/login");
           return;
         }
 
         const userData = await getMe();
         setUser(userData);
-
       } catch (error: unknown) {
-        const err = error as { response?: { status: number }; message?: string };
-        if (err?.response?.status === 401 || err.message === 'Token bekor qilindi') {
-          router.push('/auth/signup');
+        const err = error as {
+          response?: { status: number };
+          message?: string;
+        };
+        if (
+          err?.response?.status === 401 ||
+          err.message === "Token bekor qilindi"
+        ) {
+          router.push("/auth/signup");
         } else {
           console.error("Foydalanuvchi ma'lumotini olishda xatolik:", error);
         }
@@ -48,7 +58,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   }, [router]);
 
   function formatNumberWithCommas(num: number): string {
-    return num.toLocaleString('en-US');
+    return num.toLocaleString("en-US");
   }
 
   const onProfilePicClick = () => {
@@ -61,13 +71,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
     try {
       const formData = new FormData();
-      formData.append('profilePic', file);
+      formData.append("profilePic", file);
 
       const updatedUser = await updateUserProfilePic(user.id, formData);
       setUser(updatedUser);
-
     } catch (error) {
-      console.error('Rasmni yuklashda xatolik:', error);
+      console.error("Rasmni yuklashda xatolik:", error);
     }
   };
 
@@ -81,10 +90,19 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const user343 = {
+    name: "Ali Valiyev",
+    course: "JavaScript",
+  };
+
   return (
     <>
       <div onClick={() => router.back()}>
-        <CircleArrowLeft size={50} strokeWidth={1} className="mx-4 mt-4 text-white" />
+        <CircleArrowLeft
+          size={50}
+          strokeWidth={1}
+          className="mx-4 mt-4 text-white"
+        />
       </div>
 
       {user && (
@@ -128,7 +146,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <h2 className="text-xl font-semibold">{user.name}</h2>
               <span className="text-sm text-gray-300">{user.email}</span>
               <div className="mt-1 inline-flex items-end gap-2 bg-yellow-100 text-gray-900 px-3 py-0.5 rounded-full text-sm font-medium">
-                <Wallet2 width={20} /> {formatNumberWithCommas(user.coins)} tanga
+                <Wallet2 width={20} /> {formatNumberWithCommas(user.coins)}{" "}
+                tanga
               </div>
             </div>
           </div>
