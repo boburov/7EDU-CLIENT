@@ -7,6 +7,7 @@ import {
   BookText,
   HelpCircle,
   ClipboardCheck,
+  ChartArea,
 } from "lucide-react";
 import api from "@/app/api/service/api";
 
@@ -148,35 +149,38 @@ const DailyStats = () => {
     //   )}
     // </div>
     <>
-      <div className="">
-        <div className="mb-8 bg-gray-800/40 p-4 rounded-xl shadow text-white space-y-3">
-          <h3 className="text-xl font-semibold text-center">
-            📊 Umumiy statistika
+      <div className="container mt-10">
+        <div className="rounded-2xl p-6 bg-white/10 backdrop-blur-md shadow-lg border border-white/20 text-white space-y-5">
+          <h3 className="text-2xl font-bold text-center text-yellow-600 flex items-center justify-center gap-2 ">
+            <ChartArea size={40}/> Umumiy statistika
           </h3>
 
-          <div className="flex justify-between items-center text-amber-400">
-            <div className="flex items-center gap-3">
-              <BookText /> <p>Lug'at</p>
+          <div className="flex justify-between items-center bg-amber-400/10 border border-amber-400/30 rounded-xl px-4 py-3">
+            <div className="flex items-center gap-3 text-amber-300">
+              <BookText className="w-5 h-5" />
+              <p className="font-medium">Lug'at</p>
             </div>
-            <p>
+            <p className="text-white font-semibold">
               {summary.vocabulary.correct} / {summary.vocabulary.total}
             </p>
           </div>
 
-          <div className="flex justify-between items-center text-rose-400">
-            <div className="flex items-center gap-3">
-              <HelpCircle /> <p>Savollar</p>
+          <div className="flex justify-between items-center bg-rose-400/10 border border-rose-400/30 rounded-xl px-4 py-3">
+            <div className="flex items-center gap-3 text-rose-300">
+              <HelpCircle className="w-5 h-5" />
+              <p className="font-medium">Savollar</p>
             </div>
-            <p>
+            <p className="text-white font-semibold">
               {summary.quiz.correct} / {summary.quiz.total}
             </p>
           </div>
 
-          <div className="flex justify-between items-center text-emerald-400">
-            <div className="flex items-center gap-3">
-              <ClipboardCheck /> <p>Test</p>
+          <div className="flex justify-between items-center bg-emerald-400/10 border border-emerald-400/30 rounded-xl px-4 py-3">
+            <div className="flex items-center gap-3 text-emerald-300">
+              <ClipboardCheck className="w-5 h-5" />
+              <p className="font-medium">Test</p>
             </div>
-            <p>
+            <p className="text-white font-semibold">
               {summary.test.correct} / {summary.test.total}
             </p>
           </div>
