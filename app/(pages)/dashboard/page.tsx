@@ -49,7 +49,7 @@ const Page = () => {
           key={index}
           href={link.href}
           className={` h-26
-            w-full block rounded-xl border border-${link.color}-500/30 bg-${link.color}-500/10 
+            w-full block rounded-xl border border-${link.color}-500/60 bg-${link.color}-500/10 
             hover:bg-${link.color}-500/20 transition shadow-sm px-4 py-3
           `}
         >

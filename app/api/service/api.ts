@@ -2,7 +2,7 @@ import axios from 'axios';
 import apiEndpoins from '../api.endpoin';
 
 const api = axios.create({
-    baseURL: 'http://localhost:3000/',
+    baseURL: 'http://147.93.72.141:3000/',
 });
 
 api.interceptors.request.use((config) => {
@@ -30,7 +30,6 @@ api.interceptors.response.use(
 
             console.error("API Error:", data?.message || error.message || "Noma'lum xatolik yuz berdi.");
         } else {
-
             console.error(error);
         }
 

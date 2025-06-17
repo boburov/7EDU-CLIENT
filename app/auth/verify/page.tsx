@@ -11,10 +11,11 @@ const VerifyPage = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const email = typeof window !== 'undefined' ? localStorage.getItem("email") : null;
-    
+    const email =
+      typeof window !== "undefined" ? localStorage.getItem("email") : null;
+
     if (!email) {
-      router.push('signup');
+      router.push("signup");
       return;
     }
 
@@ -24,7 +25,7 @@ const VerifyPage = () => {
         if (user?.email) {
           localStorage.setItem("email", user.email);
         } else {
-          router.push('signup');
+          router.push("signup");
         }
       } catch (err) {
         setError("Failed to verify user. Please try again.");
@@ -38,11 +39,19 @@ const VerifyPage = () => {
   }, [router]);
 
   if (loading) {
-    return <div className="h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="h-screen flex items-center justify-center text-red-500">{error}</div>;
+    return (
+      <div className="h-screen flex items-center justify-center text-red-500">
+        {error}
+      </div>
+    );
   }
 
   return (

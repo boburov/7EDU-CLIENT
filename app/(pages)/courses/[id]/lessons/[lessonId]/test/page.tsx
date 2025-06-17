@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { CheckCircle2, XCircle } from "lucide-react";
+import { CheckCircle2, FileX, RefreshCcw, XCircle } from "lucide-react";
 import api from "@/app/api/service/api";
 import confetti from "canvas-confetti";
 
@@ -71,7 +71,26 @@ export default function TestPage() {
     }, 1000);
   };
 
-  if (!current) return <div className="text-center py-10">Yuklanmoqda...</div>;
+  if (!current) return <div className="mt-10 container scale-75 py-10 border border-white/10 rounded-2xl bg-white/5 shadow-2xl backdrop-blur-md text-center">
+          <div className="flex justify-center mb-4">
+            <div className="p-4 bg-white/10 rounded-full border border-white/20 shadow-inner">
+              <FileX size={32} className="text-red-400" />
+            </div>
+          </div>
+
+          <h2 className="text-2xl font-bold mb-2 text-white">Testlar topilmadi</h2>
+          <p className="text-gray-300 text-sm mb-6">
+            Ushbu dars uchun hozircha hech qanday test savollari mavjud emas. Admin tomonidan hali kiritilmagan bo‘lishi mumkin.
+          </p>
+
+          <button
+            onClick={() => window.location.reload()}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 transition text-sm text-white"
+          >
+            <RefreshCcw size={18} />
+            Qayta yuklash
+          </button>
+        </div>;
 
   return (
     <div className="flex justify-center items-center h-[60vh] px-4">

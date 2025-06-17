@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getMe, markNotificationAsRead } from "@/app/api/service/api";
-import { InfoIcon } from "lucide-react";
+import { Info, Inbox, Clock } from "lucide-react";
 
 interface NotificationContent {
   title: string;
@@ -29,8 +29,7 @@ const Page = () => {
   useEffect(() => {
     getMe().then((e: UserResponse) => {
       setNotifications(e.notifications);
-
-      e.notifications.forEach(notification => {
+      e.notifications.forEach((notification) => {
         if (!notification.isRead) {
           markNotificationAsRead(notification.id);
         }
@@ -39,26 +38,42 @@ const Page = () => {
   }, []);
 
   return (
-    <section className="container pt-5">
-      {notifications.map((habar, index) => {
-        const timeOnly = new Date(habar.notification.sentAt).toLocaleTimeString("uz-UZ", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        });
+    <section className="container max-w-2xl mx-auto pt-10 px-4">
+      {notifications.length === 0 ? (
+        <div className="flex flex-col items-center justify-center text-white/80 mt-20">
+          <Inbox className="w-16 h-16 animate-pulse mb-4" />
+          <p className="text-center text-lg">Sizda hech qanday xabar yo‘q.</p>
+        </div>
+      ) : (
+        notifications.map((habar, index) => {
+          const timeOnly = new Date(habar.notification.sentAt).toLocaleTimeString("uz-UZ", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          });
 
-        return (
-          <div
-            key={index}
-            className="w-full bg-white/10 border border-white/10 rounded-xl px-5 py-4 text-white relative mb-4"
-          >
-            <InfoIcon className="absolute right-2.5 top-2.5" />
-            <h1 className="robo-light text-base">{habar.notification.title}</h1>
-            <p className="mb-2">{habar.notification.message}</p>
-            <span className="robo-light text-xs absolute bottom-1 right-5">{timeOnly}</span>
-          </div>
-        );
-      })}
+          return (
+            <div
+              key={index}
+              className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 text-white shadow-xl mb-5"
+            >
+              <div className="flex items-start gap-3">
+                <div className="bg-white/20 rounded-full p-2">
+                  <Info className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h1 className="font-semibold text-base mb-1">{habar.notification.title}</h1>
+                  <p className="text-sm text-white/80">{habar.notification.message}</p>
+                </div>
+              </div>
+              <div className="absolute bottom-2 right-5 flex items-center gap-1 text-xs text-white/60">
+                <Clock className="w-3.5 h-3.5" />
+                <span>{timeOnly}</span>
+              </div>
+            </div>
+          );
+        })
+      )}
     </section>
   );
 };

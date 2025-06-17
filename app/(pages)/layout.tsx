@@ -98,7 +98,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 <img
                   src={user.profilePic}
                   alt="user image"
-                  className="rounded-full border-2 border-white/5 p-1 bg-gray-500 object-cover"
+                  className="rounded-full border border-white/5 p-0.5 bg-gray-500 object-cover"
                   sizes="80px"
                 />
                 <button
