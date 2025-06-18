@@ -98,11 +98,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <div onClick={() => router.back()}>
-        <CircleArrowLeft
-          size={50}
-          strokeWidth={1}
-          className="mx-4 mt-4 text-white"
-        />
+        <CircleArrowLeft size={50} strokeWidth={1} className="m-4 text-white" />
       </div>
 
       {user && (
