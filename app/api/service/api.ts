@@ -2,7 +2,7 @@ import axios from 'axios';
 import apiEndpoins from '../api.endpoin';
 
 const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
+    baseURL: process.env.NEXT_PUBLIC_API || 'http://147.93.72.141:3000/',
 });
 
 api.interceptors.request.use((config) => {
@@ -40,7 +40,6 @@ api.interceptors.response.use(
         );
     }
 );
-
 
 export const updateUserProfilePic = async (userId: string, formData: FormData) => {
     const response = await api.post(apiEndpoins.updateUserProfilePic(userId), formData);
@@ -142,9 +141,7 @@ export const GetLessonsById = async (id: string) => {
     return res.data
 }
 
-
 // ai usage
-
 export const sendrequestForAI = async (lessonId: string, message: string) => {
     const res = await api.post("/user/chat", {
         lessonId,
@@ -153,6 +150,16 @@ export const sendrequestForAI = async (lessonId: string, message: string) => {
 
     return res.data
 }
+
+export const addCoins = async (userId: string, coins: number) => {
+    const res = await api.post(apiEndpoins.addCoin, { userId, coins });
+    return res.data;
+};
+
+export const showedLesson = async (lessonId: string) => {
+    const res = await api.post("/user/mark-lesson-seen", { lessonId });
+    return res.data;
+};
 
 
 export default api;

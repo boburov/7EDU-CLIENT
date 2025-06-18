@@ -1,6 +1,6 @@
 "use client";
 
-import { GetLessonsById } from "@/app/api/service/api";
+import { GetLessonsById, showedLesson } from "@/app/api/service/api";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -17,10 +17,10 @@ import {
 import Link from "next/link";
 
 interface Lesson {
-  title: string
-  videoUrl: string
-  quizs: []
-  dictonary: []
+  title: string;
+  videoUrl: string;
+  quizs: [];
+  dictonary: [];
 }
 const Page = () => {
   const path = useParams();
@@ -34,13 +34,20 @@ const Page = () => {
   const [lastTapLeft, setLastTapLeft] = useState<number | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isWatched, setIsWatched] = useState(false);
-  const [lesson, setLesson] = useState<Lesson | null>(null)
+  const [lesson, setLesson] = useState<Lesson | null>(null);
   const [volume, setVolume] = useState(1);
 
   useEffect(() => {
     GetLessonsById(lessonId).then((data) => {
-      setLesson(data)
+      setLesson(data);
     });
+    showedLesson(lessonId)
+      .then(() => {
+        setIsWatched(true);
+      })
+      .catch((err) => {
+        console.error("Xatolik yuz berdi:", err);
+      });
   }, [lessonId]);
 
   const togglePlay = () => {
@@ -94,13 +101,14 @@ const Page = () => {
         if ("unlock" in screen.orientation) {
           try {
             (screen.orientation as any).unlock();
-          } catch (_) { }
+          } catch (_) {}
         }
       }
     };
 
     document.addEventListener("fullscreenchange", onFullscreenChange);
-    return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", onFullscreenChange);
   }, []);
 
   const toggleFullscreen = async () => {
@@ -137,7 +145,7 @@ const Page = () => {
   };
 
   const PauseVideo = async () => {
-    setIsPlaying(!isPlaying)
+    setIsPlaying(!isPlaying);
     const video = videoRef.current;
     if (!video) return;
 
@@ -148,13 +156,14 @@ const Page = () => {
       video.pause();
       setIsPlaying(false);
     }
-  }
+  };
 
   return (
     <div
       ref={containerRef}
-      className={`relative space-y-2 w-full ${isFullscreen ? "h-screen bg-black" : "max-w-4xl mx-auto px-5"
-        } transition-all duration-300`}
+      className={`relative space-y-2 w-full ${
+        isFullscreen ? "h-screen bg-black" : "max-w-4xl mx-auto px-5"
+      } transition-all duration-300`}
     >
       <div className="relative w-full aspect-video bg-black overflow-hidden rounded-2xl shadow-2xl">
         <video
@@ -173,9 +182,12 @@ const Page = () => {
         />
       </div>
 
-      <div className={`${isFullscreen ? "absolute bottom-3 left-0 right-0 px-8 " : ""} z-10`}>
+      <div
+        className={`${
+          isFullscreen ? "absolute bottom-3 left-0 right-0 px-8 " : ""
+        } z-10`}
+      >
         <div className="flex items-center gap-4 px-4 py-3 bg-black/80 backdrop-blur-md border border-white/10 text-white rounded-xl shadow-lg">
-
           <button
             onClick={seekBackward}
             title="2s orqaga"
@@ -189,7 +201,11 @@ const Page = () => {
             title="Oynat/Pauza"
             className="hover:text-green-400 transition"
           >
-            {isPlaying ? <PauseCircle strokeWidth={1} size={28} /> : <PlayCircle strokeWidth={1} size={28} />}
+            {isPlaying ? (
+              <PauseCircle strokeWidth={1} size={28} />
+            ) : (
+              <PlayCircle strokeWidth={1} size={28} />
+            )}
           </button>
           <div className="flex items-center gap-2">
             <Volume2 strokeWidth={1} />
@@ -222,8 +238,10 @@ const Page = () => {
       </div>
 
       <div className="space-y-4">
-
-        <Link href={`${lessonId}/vocabulary`} className="w-full h-20 bg-yellow-400/10 border border-yellow-600 flex items-center gap-5 px-5 text-yellow-400 rounded-md hover:scale-[1.02] transition-all duration-300 shadow-sm">
+        <Link
+          href={`${lessonId}/vocabulary`}
+          className="w-full h-20 bg-yellow-400/10 border border-yellow-600 flex items-center gap-5 px-5 text-yellow-400 rounded-md hover:scale-[1.02] transition-all duration-300 shadow-sm"
+        >
           <div className="text-3xl">
             <Languages size={30} strokeWidth={1} />
           </div>
@@ -233,7 +251,10 @@ const Page = () => {
           </div>
         </Link>
 
-        <Link href={`${lessonId}/test`} className="w-full h-20 bg-purple-400/10 border border-purple-700 flex items-center gap-5 px-5 text-purple-400 rounded-md hover:scale-[1.02] transition-all duration-300 shadow-sm">
+        <Link
+          href={`${lessonId}/test`}
+          className="w-full h-20 bg-purple-400/10 border border-purple-700 flex items-center gap-5 px-5 text-purple-400 rounded-md hover:scale-[1.02] transition-all duration-300 shadow-sm"
+        >
           <div className="text-3xl">
             <ListChecks size={30} strokeWidth={1} />
           </div>
@@ -243,7 +264,10 @@ const Page = () => {
           </div>
         </Link>
 
-        <Link href={`${lessonId}/quiz`.toLowerCase()} className="w-full h-20 bg-blue-400/10 border border-blue-700 flex items-center gap-5 px-5 text-blue-400 rounded-md hover:scale-[1.02] transition-all duration-300 shadow-sm">
+        <Link
+          href={`${lessonId}/quiz`.toLowerCase()}
+          className="w-full h-20 bg-blue-400/10 border border-blue-700 flex items-center gap-5 px-5 text-blue-400 rounded-md hover:scale-[1.02] transition-all duration-300 shadow-sm"
+        >
           <div className="text-3xl">
             <ListChecks size={30} strokeWidth={1} />
           </div>
@@ -253,7 +277,10 @@ const Page = () => {
           </div>
         </Link>
 
-        <Link href={`${lessonId}/ask-for-ai`.toLowerCase()} className="w-full h-20 bg-emerald-400/10 border border-emerald-700 flex items-center gap-5 px-5 text-emerald-400 rounded-md hover:scale-[1.02] transition-all duration-300 shadow-sm">
+        <Link
+          href={`${lessonId}/ask-for-ai`.toLowerCase()}
+          className="w-full h-20 bg-emerald-400/10 border border-emerald-700 flex items-center gap-5 px-5 text-emerald-400 rounded-md hover:scale-[1.02] transition-all duration-300 shadow-sm"
+        >
           <div className="text-3xl">
             <MessageCircleQuestion size={30} strokeWidth={1} />
           </div>
@@ -262,9 +289,7 @@ const Page = () => {
             <div className="text-sm text-emerald-300">{`Savolingizni ustozga bevosita yuboring`}</div>
           </div>
         </Link>
-
       </div>
-
     </div>
   );
 };

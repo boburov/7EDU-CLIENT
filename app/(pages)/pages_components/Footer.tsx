@@ -44,7 +44,7 @@ const Footer = () => {
 
     return (
         <footer className="fixed left-0 bottom-0 w-full z-50 px-1.5 pb-1.5">
-            <div className="container py-2  bg-[#343434]/20 backdrop-blur-xl border border-white/10 rounded-xl">
+            <div className="container py-2  bg-[#343434]/60 backdrop-blur-xl border border-white/10 rounded-xl">
                 <ul className="flex items-center justify-between gap-2 px-2 py-3 rounded-lg">
                     {navLinks.map(({ href, icon: Icon, label },index) => {
                         const isActive = pathname === href;

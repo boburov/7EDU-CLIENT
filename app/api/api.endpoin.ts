@@ -1,3 +1,5 @@
+import { mark } from "framer-motion/client";
+
 const main_url = {
   auth: "auth",
   course: "courses",
@@ -13,13 +15,15 @@ const apiEndpoins = {
   verifyCode: `${main_url.auth}/verify`,
   registerUser: `${main_url.auth}/register`,
   decodeToken: `${main_url.auth}/verify-token`,
+  addCoin: `${main_url.auth}/coins`,
 
   allCourse: `${main_url.course}/all`,
   getCategory: (id: string) => `${main_url.course}/category/${id}`,
   addLesson: (id: string) => `${main_url.course}/category/${id}/newlesson`,
   getLessonById: (id: string) => `${main_url.course}/lessons/${id}`,
-
+  markLessonSeen: `${main_url.user}/mark-lesson-seen`,
   oneQuiz: (id: string) => `${main_url.quiz}/${id}`,
+  
   deleteQuiz: (id: string) => `${main_url.quiz}/${id}`,
   createQuiz: (id: string) => `${main_url.quiz}/${id}/new-quiz`,
   updateUser: (id: string) => `${main_url.user}/update/${id}`,
