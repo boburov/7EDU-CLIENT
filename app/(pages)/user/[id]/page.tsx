@@ -58,7 +58,7 @@ const UserPage = () => {
       <h1 className="text-xl mb-1">
         Kurslarim soni: {user?.courses?.length ?? 0}
       </h1>
-      <ul className="space-y-4 mb-7">
+      <ul className="space-y-4 grid grid-cols-3 mb-7">
         {userCourses.map((kurs) => {
           return (
             <li

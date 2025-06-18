@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
+import { forgotPassword, login } from "@/app/api/service/api";
 import { ArrowLeft, School } from "lucide-react";
-import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { login, forgotPassword } from "@/app/api/service/api";
+import { useState } from "react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -17,11 +17,14 @@ const Login = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
+
     setMsg("");
-  
+    setLoading(true);
+
     try {
       const data = await login({ email, password });
-  
+
       if (data) {
         const userId = data.checkId.userID;
         router.push(`/user/${userId}`);
@@ -29,29 +32,31 @@ const Login = () => {
         setMsg("Login muvaffaqiyatsiz");
       }
     } catch (error) {
-      
       const err = error as Error;
       console.log(err.message);
       setMsg("Parol yoki email noto‘g‘ri");
+    } finally {
+      setLoading(false);
     }
   };
 
- 
-const handleForgotPassword = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setMsg("");
-  setLoading(true);
-  try {
-    await forgotPassword(email);
-    setMsg("Yangi parol emailingizga yuborildi.");
-    setForgotMode(false);
-  } catch (error) {
-    const err = error as Error;
-    setMsg(err.message || "Email topilmadi");
-  } finally {
-    setLoading(false);
-  }
-};
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (loading) return;
+
+    setMsg("");
+    setLoading(true);
+    try {
+      await forgotPassword(email);
+      setMsg("Yangi parol emailingizga yuborildi.");
+      setForgotMode(false);
+    } catch (error) {
+      const err = error as Error;
+      setMsg(err.message || "Email topilmadi");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <section className="container pt-5">
@@ -90,15 +95,19 @@ const handleForgotPassword = async (e: React.FormEvent) => {
 
             <button
               type="submit"
-              className="bg-[#00C835] w-full py-3 rounded-md text-xl font-bold text-white mb-2"
+              disabled={loading}
+              className={`w-full py-3 rounded-md text-xl font-bold text-white mb-2 ${
+                loading ? "bg-[#00C835]/60 cursor-not-allowed" : "bg-[#00C835]"
+              }`}
             >
-              Kirish
+              {loading ? "Kirish..." : "Kirish"}
             </button>
 
             <button
               type="button"
               onClick={() => setForgotMode(true)}
               className="text-white underline w-full text-center"
+              disabled={loading}
             >
               Parolni unutdingizmi?
             </button>
@@ -118,15 +127,18 @@ const handleForgotPassword = async (e: React.FormEvent) => {
             <button
               type="submit"
               disabled={loading}
-              className="bg-[#00C835] w-full py-3 rounded-md text-xl font-bold text-white mb-2"
+              className={`w-full py-3 rounded-md text-xl font-bold text-white mb-2 ${
+                loading ? "bg-[#00C835]/60 cursor-not-allowed" : "bg-[#00C835]"
+              }`}
             >
-              Parolni tiklash
+              {loading ? "Yuborilmoqda..." : "Parolni tiklash"}
             </button>
 
             <button
               type="button"
               onClick={() => setForgotMode(false)}
               className="text-white underline w-full text-center"
+              disabled={loading}
             >
               Orqaga
             </button>
