@@ -161,7 +161,7 @@ const SignupPage = () => {
                         </button>
                     </form>
 
-                    <Link href="/login" className="text-white/80 font-[robolight] tracking-wide underline">
+                    <Link href="login" className="text-white/80 font-[robolight] tracking-wide underline">
                        {` O'quvchi sifatida kirish`}
                     </Link>
                 </div>
