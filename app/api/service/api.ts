@@ -2,7 +2,7 @@ import axios from 'axios';
 import apiEndpoins from '../api.endpoin';
 
 const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API || 'http://147.93.72.141:3000/',
+    baseURL: process.env.NEXT_PUBLIC_API || 'https://sevenedu.store/',
 });
 
 api.interceptors.request.use((config) => {
