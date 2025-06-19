@@ -11,6 +11,7 @@ import {
 } from "../api/service/api";
 import Head from "next/head";
 import Header from "../components/Header";
+import Hero from "../components/Hero";
 
 interface User {
   id: string;
@@ -92,10 +93,14 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-     <Header/>
-     
+      <Header />
+      <Hero />
       <div onClick={() => router.back()}>
-        <CircleArrowLeft size={50} strokeWidth={1} className="m-4 text-white hidden max-md:block" />
+        <CircleArrowLeft
+          size={50}
+          strokeWidth={1}
+          className="m-4 text-white hidden max-md:block"
+        />
       </div>
 
       {user && (

@@ -50,9 +50,9 @@ const Header = () => {
   return (
     <header className="w-full z-50 px-1.5 pt-2 xl:block max-md:hidden">
       <div className="container bg-white/10 backdrop-blur-xl border border-white/10 text-white rounded-xl px-2 py-2 mx-auto flex items-center justify-between shadow-md">
-        <h1 className="uppercase text-2xl font-semibold tracking-wide text-white">
+        <Link href={`/user/${userId}`} className="flex items-center gap-2">
           <Image alt="logo" src={logo} className="w-16 object-cover" />
-        </h1>
+        </Link>
         <ul className="flex items-center gap-4 text-sm font-medium">
           {navLinks.map(({ href, icon: Icon, label }, index) => {
             const isActive = pathname === href;

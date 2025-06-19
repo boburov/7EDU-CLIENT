@@ -40,7 +40,9 @@ const UserPage = () => {
         setUser(meData);
 
         const userCourseData = await Promise.all(
-          meData.courses.map((courseId: any) => GetCourseById(courseId.courseId))
+          meData.courses.map((courseId: any) =>
+            GetCourseById(courseId.courseId)
+          )
         );
         setUserCourses(userCourseData);
       } catch (e) {
@@ -53,7 +55,9 @@ const UserPage = () => {
 
   return (
     <section className="container p-5 text-white">
-      <h1 className="text-xl mb-6">Kurslarim soni: {user?.courses?.length ?? 0}</h1>
+      <h1 className="text-xl mb-6">
+        Kurslarim soni: {user?.courses?.length ?? 0}
+      </h1>
 
       <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-14">
         {userCourses.map((kurs) => (
