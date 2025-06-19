@@ -94,7 +94,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <Header />
-      <Hero />
+
       <div onClick={() => router.back()}>
         <CircleArrowLeft
           size={50}
@@ -104,7 +104,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       </div>
 
       {user && (
-        <section className="container text-white pt-10 relative">
+        <section className="container text-white pt-10 relative hidden max-md:block">
           <div
             className="flex items-center gap-3 mb-4 cursor-pointer"
             onClick={onProfilePicClick}

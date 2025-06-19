@@ -1,8 +1,9 @@
+import { Rocket, BookOpen } from "lucide-react";
 import heroimg from "@/app/images/heroimg.png";
 
 const Hero = () => {
   return (
-    <section className="relative w-full py-24 bg-gradient-to-br from-[#0a0f0d] via-[#0d1c14] to-[#091812] overflow-hidden">
+    <section className="relative w-full py-24 overflow-hidden max-md:hidden">
       {/* Light gradient effect */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-green-800/5 via-transparent to-transparent pointer-events-none z-0" />
 
@@ -14,14 +15,15 @@ const Hero = () => {
           </h1>
 
           <p className="text-lg lg:text-xl text-white/80 leading-relaxed max-w-xl backdrop-blur-sm">
-            🇺🇿 O'zbekistondagi eng yaxshi onlayn ta'lim platformasi. <br />
-            🎯 Biz sizga sifatli, qulay va zamonaviy bilim beramiz. <br />
-            🚀 O‘rganing. Rivojlaning. Yutuqqa yeting!
+            O'zbekistondagi eng yaxshi onlayn ta'lim platformasi. <br />
+            Sifatli, qulay va zamonaviy bilim bizda. <br />
+            O‘rganing. Rivojlaning. Yutuqqa yeting!
           </p>
 
           <div>
-            <button className="mt-4 px-6 py-3 bg-green-500 hover:bg-green-600 transition text-white text-base rounded-xl shadow-xl hover:scale-105 active:scale-95">
-              🚀 Kurslarni Ko‘rish
+            <button className="mt-4 px-6 py-3 bg-green-500 hover:bg-green-600 transition text-white text-base rounded-xl shadow-xl hover:scale-105 active:scale-95 flex items-center gap-2">
+              <Rocket className="w-5 h-5" />
+              Kurslarni Ko‘rish
             </button>
           </div>
         </div>
@@ -34,8 +36,9 @@ const Hero = () => {
               alt="SevenEdu platforma rasmi"
               className="w-full h-auto object-cover"
             />
-            <div className="absolute bottom-4 right-4 bg-green-600 text-white text-xs px-3 py-1 rounded-lg shadow-md">
-              📚 O‘rganishni boshlang!
+            <div className="absolute bottom-4 right-4 bg-green-600 text-white text-xs px-3 py-1 rounded-lg shadow-md flex items-center gap-1">
+              <BookOpen className="w-4 h-4" />
+              O‘rganishni boshlang!
             </div>
           </div>
         </div>
