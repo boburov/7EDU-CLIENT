@@ -9,8 +9,8 @@ import {
   getMe,
   updateUserProfilePic,
 } from "../api/service/api";
-import Image from "next/image";
-import CertificateGenerator from "../components/Certeficate";
+import Head from "next/head";
+import Header from "../components/Header";
 
 interface User {
   id: string;
@@ -90,15 +90,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const user343 = {
-    name: "Ali Valiyev",
-    course: "JavaScript",
-  };
-
   return (
     <>
+     <Header/>
+     
       <div onClick={() => router.back()}>
-        <CircleArrowLeft size={50} strokeWidth={1} className="m-4 text-white" />
+        <CircleArrowLeft size={50} strokeWidth={1} className="m-4 text-white hidden max-md:block" />
       </div>
 
       {user && (

@@ -161,5 +161,21 @@ export const showedLesson = async (lessonId: string) => {
     return res.data;
 };
 
+export const verifyToken = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Token not found");
+
+    const res = await api.get(`/auth/verify-token`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (!res.status) throw new Error("Invalid or expired token");
+
+    return res.data
+};
+
 
 export default api;

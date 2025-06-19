@@ -1,7 +1,7 @@
 "use client";
 
-import { allCourse } from "@/app/api/service/api";
-import { Lock } from "lucide-react";
+import { allCourse, GetCourseById, getMe } from "@/app/api/service/api";
+import { Lock, Play } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -13,66 +13,119 @@ interface Course {
   goal: string;
 }
 
-const Page = () => {
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  profilePic?: string;
+  courses: Course[];
+  phonenumber: string;
+  coin: number;
+}
+
+const UserPage = () => {
+  const [user, setUser] = useState<User | null>(null);
   const [courses, setCourses] = useState<Course[]>([]);
+  const [userCourses, setUserCourses] = useState<Course[]>([]);
 
   useEffect(() => {
-    const fetchCourses = async () => {
+    const fetchAll = async () => {
       try {
-        const allCoursesData = await allCourse();
+        const [allCoursesData, meData] = await Promise.all([
+          allCourse(),
+          getMe(),
+        ]);
+
         setCourses(allCoursesData);
+        setUser(meData);
+
+        const userCourseData = await Promise.all(
+          meData.courses.map((courseId: any) => GetCourseById(courseId.courseId))
+        );
+        setUserCourses(userCourseData);
       } catch (e) {
-        console.error("fetchCourses error:", e);
+        console.error("fetchAll error:", e);
       }
     };
 
-    fetchCourses();
+    fetchAll();
   }, []);
 
   return (
-    <section className="container text-white">
-      <h1 className="text-2xl font-bold mb-4">Barcha Kurslar</h1>
+    <section className="container p-5 text-white">
+      <h1 className="text-xl mb-6">Kurslarim soni: {user?.courses?.length ?? 0}</h1>
+
+      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-14">
+        {userCourses.map((kurs) => (
+          <li
+            key={kurs.id}
+            className="group relative flex flex-col bg-gradient-to-br from-green-800/20 to-green-600/10 p-5 border border-green-400/20 rounded-2xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-transform"
+          >
+            <div className="w-full h-36 mb-4 overflow-hidden rounded-xl">
+              <img
+                src={kurs.thumbnail}
+                alt={kurs.title}
+                className="w-full h-full object-cover object-center"
+              />
+            </div>
+            <h3 className="uppercase font-semibold text-green-300 tracking-wider text-lg mb-2">
+              {kurs.title}
+            </h3>
+            <p className="text-sm text-white/80 mb-1">
+              <strong>Darslar:</strong> {kurs.lessons?.length || 0}
+            </p>
+            <p className="text-sm text-white/70 mb-3 line-clamp-2">
+              <strong>Maqsad:</strong> {kurs.goal}
+            </p>
+            <Link
+              href={`/courses/${kurs.id}`}
+              className="text-sm px-4 py-2 bg-green-500 hover:bg-green-600 rounded-lg text-white font-medium flex items-center gap-2 w-fit"
+            >
+              <Play size={16} /> Darslarni Ko‘rish
+            </Link>
+          </li>
+        ))}
+      </ul>
+
+      <h1 className="text-2xl font-bold mb-6">Barcha Kurslar</h1>
 
       {courses.length > 0 ? (
-        <ul className="grid grid-cols-2 gap-5 max-md:grid-cols-1 mb-10">
+        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {courses.map((kurs) => (
             <li
               key={kurs.id}
-              className="flex items-center justify-between gap-4 px-2 py-2 bg-white/15 border border-white/15 text-white rounded-2xl transition-transform hover:scale-105"
+              className="group relative flex flex-col bg-gradient-to-tr from-[#1e1e1e] to-green-900/10 p-5 border border-white/10 rounded-2xl overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-transform"
             >
-              <img
-                src={kurs.thumbnail}
-                alt={`${kurs.title} kursining rasmi`}
-                width={300}
-                height={128}
-                className="w-1/2 h-32 object-cover rounded"
-              />
-              <div className="flex flex-col w-full h-11/12 gap-1.5 justify-between items-start font-[robolight] tracking-wide">
-                <h3 className="uppercase font-bold text-green-500 text-base mb-1 tracking-widest">
-                  {kurs.title}
-                </h3>
-                <span className="text-sm leading-2">
-                  <strong>Darslar Soni:</strong>{" "}
-                  <span className="font-light">{kurs.lessons.length}</span>
-                </span>
-                <span className="my-1 text-sm leading-5 w-36 truncate">
-                  <strong>Maqsad: </strong> {kurs.goal}
-                </span>
-                <Link
-                  href={`courses/${kurs.id}`}
-                  className="px-2 py-1.5 bg-green-500 rounded-md flex items-center gap-1 text-xs"
-                >
-                  <Lock width={18} /> Demo Darslarni Ko&apos;rish
-                </Link>
+              <div className="w-full h-36 mb-4 overflow-hidden rounded-xl">
+                <img
+                  src={kurs.thumbnail}
+                  alt={kurs.title}
+                  className="w-full h-full object-cover object-center"
+                />
               </div>
+              <h3 className="uppercase font-semibold text-green-400 tracking-wider text-lg mb-2">
+                {kurs.title}
+              </h3>
+              <p className="text-sm text-white/80 mb-1">
+                <strong>Darslar:</strong> {kurs.lessons.length}
+              </p>
+              <p className="text-sm text-white/70 mb-3 line-clamp-2">
+                <strong>Maqsad:</strong> {kurs.goal}
+              </p>
+              <Link
+                href={`/courses/${kurs.id}`}
+                className="text-sm px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white font-medium flex items-center gap-2 w-fit"
+              >
+                <Lock size={16} /> Demo Darslarni Ko‘rish
+              </Link>
             </li>
           ))}
         </ul>
       ) : (
-        <h2>Xozircha kurslar yo&apos;q</h2>
+        <p className="text-center text-white/70">Xozircha kurslar yo‘q</p>
       )}
     </section>
   );
 };
 
-export default Page;
+export default UserPage;

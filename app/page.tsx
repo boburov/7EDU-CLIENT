@@ -1,11 +1,12 @@
-"use client"
+"use client";
 import { useEffect } from "react";
 import Home from "./components/Home";
+import { useRouter } from "next/navigation";
 
 export default function page() {
   useEffect(() => {
     const tg = (window as any).Telegram;
-    if (typeof window !== 'undefined' && tg?.WebApp) {
+    if (typeof window !== "undefined" && tg?.WebApp) {
       tg.WebApp.ready();
       tg.WebApp.expand();
     }

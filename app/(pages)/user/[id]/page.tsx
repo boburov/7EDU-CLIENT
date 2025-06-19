@@ -68,7 +68,7 @@ const UserPage = () => {
               <img
                 src={kurs.thumbnail}
                 alt={`${kurs.title} kursining rasmi`}
-                className="w-1/2 h-32 object-cover rounded"
+                className="w-1/2 h-32 object-cover rounded-xl"
               />
               <div className="flex flex-col w-full h-11/12 justify-between items-start font-[robolight] tracking-wide gap-1">
                 <h3 className="uppercase font-bold text-green-500 text-base mb-1 tracking-widest">
