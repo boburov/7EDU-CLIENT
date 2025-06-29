@@ -1,7 +1,7 @@
 "use client";
 
 import { allCourse, GetCourseById, getMe } from "@/app/api/service/api";
-import { Lock, Play, Gift, Coins, UserCheck, GaugeCircle } from "lucide-react";
+import { Lock, Play, Gift, Coins, UserCheck, GaugeCircle, Award } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -51,6 +51,12 @@ const dashboardLinks = [
     title: "Tangalar",
     description: "Toplagan ballaringiz va ularni ishlatish tarixi",
     color: "gray",
+  },{
+    href: "dashboard/certificate",
+    icon: <Award size={40} className="text-sky-300" />,
+    title: "Certificatlarim",
+    description: "Sizning sertifikatlaringiz va ularni olish jarayoni",
+    color: "sky",
   },
 ];
 
@@ -63,6 +69,8 @@ const UserPage = () => {
     const fetchAll = async () => {
       try {
         getMe().then((data) => {
+          console.log(data);
+          
           data.courses.map((courseId: any) => {
             GetCourseById(courseId.courseId).then((ddd) => {
               setUserCourses((prev) => [...prev, ddd]);

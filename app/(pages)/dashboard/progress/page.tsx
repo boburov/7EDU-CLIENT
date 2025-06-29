@@ -8,6 +8,7 @@ import {
   HelpCircle,
   ClipboardCheck,
   ChartArea,
+  CalendarDays,
 } from "lucide-react";
 import api from "@/app/api/service/api";
 
@@ -23,6 +24,7 @@ const DailyStats = () => {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [filterDate, setFilterDate] = useState<string>("");
+  const [viewType, setViewType] = useState<"daily" | "summary">("daily");
 
   const getSummary = (entries: StatEntry[]) => {
     return entries.reduce(
@@ -76,83 +78,110 @@ const DailyStats = () => {
     return <div className="text-white text-center py-10">Yuklanmoqda...</div>;
 
   return (
-    // <div className="container text-white pt-6 space-y-4 max-w-3xl mx-auto">
-    //   <h2 className="text-2xl font-semibold mb-4 text-center">
-    //     📅 Har kunlik faoliyat
-    //   </h2>
+    <div className="container text-white pt-6 space-y-4 max-w-3xl mx-auto">
+      {/* Switch */}
+      <div className="flex justify-center gap-4 mb-4">
+        <button
+          onClick={() => setViewType("daily")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+            viewType === "daily"
+              ? "bg-yellow-600 text-white"
+              : "bg-gray-700 text-gray-300"
+          }`}
+        >
+          <CalendarDays className="w-5 h-5" />
+          Har kunlik
+        </button>
+        <button
+          onClick={() => setViewType("summary")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+            viewType === "summary"
+              ? "bg-yellow-600 text-white"
+              : "bg-gray-700 text-gray-300"
+          }`}
+        >
+          <ChartArea className="w-5 h-5" />
+          Umumiy
+        </button>
+      </div>
 
-    //   <div className="mb-6">
-    //     <label className="block mb-2 text-sm text-gray-300">
-    //       Kunni tanlang:
-    //     </label>
-    //     <input
-    //       type="date"
-    //       value={filterDate}
-    //       onChange={(e) => setFilterDate(e.target.value)}
-    //       className="bg-gray-700 text-white p-2 rounded w-full"
-    //     />
-    //   </div>
+      {/* Har kunlik statistika */}
+      {viewType === "daily" && (
+        <>
+          <div className="mb-6">
+            <label className="block mb-2 text-sm text-gray-300">
+              Kunni tanlang:
+            </label>
+            <input
+              type="date"
+              value={filterDate}
+              onChange={(e) => setFilterDate(e.target.value)}
+              className="bg-gray-700 text-white p-2 rounded w-full"
+            />
+          </div>
 
-    //   {filteredData.map((entry) => (
-    //     <div
-    //       key={entry.date}
-    //       className="rounded-xl border border-gray-500/30 bg-gray-500/10 px-5 py-4 shadow"
-    //     >
-    //       <button
-    //         className="flex items-center justify-between w-full text-left"
-    //         onClick={() =>
-    //           setExpanded(expanded === entry.date ? null : entry.date)
-    //         }
-    //       >
-    //         <span className="text-lg font-medium">{entry.date}</span>
-    //         {expanded === entry.date ? <ChevronUp /> : <ChevronDown />}
-    //       </button>
+          {filteredData.map((entry) => (
+            <div
+              key={entry.date}
+              className="rounded-xl border border-gray-500/30 bg-gray-500/10 px-5 py-4 shadow"
+            >
+              <button
+                className="flex items-center justify-between w-full text-left"
+                onClick={() =>
+                  setExpanded(expanded === entry.date ? null : entry.date)
+                }
+              >
+                <span className="text-lg font-medium">{entry.date}</span>
+                {expanded === entry.date ? <ChevronUp /> : <ChevronDown />}
+              </button>
 
-    //       {expanded === entry.date && (
-    //         <div className="mt-4 space-y-3">
-    //           <div className="flex justify-between items-center text-amber-400">
-    //             <div className="flex items-center gap-3">
-    //               <BookText /> <p>Lug'at</p>
-    //             </div>
-    //             <p>
-    //               {entry.vocabulary?.correct ?? 0} /{" "}
-    //               {entry.vocabulary?.total ?? 0}
-    //             </p>
-    //           </div>
+              {expanded === entry.date && (
+                <div className="mt-4 space-y-3">
+                  <div className="flex justify-between items-center text-amber-400">
+                    <div className="flex items-center gap-3">
+                      <BookText /> <p>Lug'at</p>
+                    </div>
+                    <p>
+                      {entry.vocabulary?.correct ?? 0} /{" "}
+                      {entry.vocabulary?.total ?? 0}
+                    </p>
+                  </div>
 
-    //           <div className="flex justify-between items-center text-rose-400">
-    //             <div className="flex items-center gap-3">
-    //               <HelpCircle /> <p>Savollar</p>
-    //             </div>
-    //             <p>
-    //               {entry.quiz?.correct ?? 0} / {entry.quiz?.total ?? 0}
-    //             </p>
-    //           </div>
+                  <div className="flex justify-between items-center text-rose-400">
+                    <div className="flex items-center gap-3">
+                      <HelpCircle /> <p>Savollar</p>
+                    </div>
+                    <p>
+                      {entry.quiz?.correct ?? 0} / {entry.quiz?.total ?? 0}
+                    </p>
+                  </div>
 
-    //           <div className="flex justify-between items-center text-emerald-400">
-    //             <div className="flex items-center gap-3">
-    //               <ClipboardCheck /> <p>Test</p>
-    //             </div>
-    //             <p>
-    //               {entry.test?.correct ?? 0} / {entry.test?.total ?? 0}
-    //             </p>
-    //           </div>
-    //         </div>
-    //       )}
-    //     </div>
-    //   ))}
+                  <div className="flex justify-between items-center text-emerald-400">
+                    <div className="flex items-center gap-3">
+                      <ClipboardCheck /> <p>Test</p>
+                    </div>
+                    <p>
+                      {entry.test?.correct ?? 0} / {entry.test?.total ?? 0}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
 
-    //   {filteredData.length === 0 && (
-    //     <p className="text-center text-gray-400">
-    //       Bu sana uchun hech qanday statistika topilmadi.
-    //     </p>
-    //   )}
-    // </div>
-    <>
-      <div className="container mt-10">
+          {filteredData.length === 0 && (
+            <p className="text-center text-gray-400">
+              Bu sana uchun hech qanday statistika topilmadi.
+            </p>
+          )}
+        </>
+      )}
+
+      {/* Umumiy statistika */}
+      {viewType === "summary" && (
         <div className="rounded-2xl p-6 bg-white/10 backdrop-blur-md shadow-lg border border-white/20 text-white space-y-5">
           <h3 className="text-2xl font-bold text-center text-yellow-600 flex items-center justify-center gap-2 ">
-            <ChartArea size={40}/> Umumiy statistika
+            <ChartArea size={40} /> Umumiy statistika
           </h3>
 
           <div className="flex justify-between items-center bg-amber-400/10 border border-amber-400/30 rounded-xl px-4 py-3">
@@ -185,8 +214,8 @@ const DailyStats = () => {
             </p>
           </div>
         </div>
-      </div>
-    </>
+      )}
+    </div>
   );
 };
 

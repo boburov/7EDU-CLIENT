@@ -2,7 +2,8 @@ import axios from 'axios';
 import apiEndpoins from '../api.endpoin';
 
 const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API || 'https://sevenedu.store/',
+    baseURL: `http://localhost:3000/`
+    //  || 'https://sevenedu.store/',
 });
 
 api.interceptors.request.use((config) => {
@@ -64,10 +65,26 @@ export const login = async (data: object) => {
     return res.data;
 };
 
-export const getMe = async () => {
-    const res = await api.get(apiEndpoins.getMe);
-    return res.data;
+export const getMe = async (navigate?: (path: string) => void) => {
+    try {
+        const res = await api.get(apiEndpoins.getMe);
+        return res.data;
+    } catch (err: any) {
+        if (err.response?.status === 401) {
+            if (navigate) {
+                navigate('/login'); 
+            } else {
+                window.location.href = '/login';
+            }
+            return null;
+        }
+
+        if (err.response?.status === 404) return null;
+        throw err;
+    }
 };
+
+
 
 export const checkEmail = async (email: string) => {
     try {
@@ -125,6 +142,11 @@ export const forgotPassword = async (email: string) => {
 
 };
 
+export const getUserActivity = async () => {
+    const res = await api.get("lesson-activity");
+    return res.data;
+};
+
 // Courses
 export const allCourse = async () => {
     const allCourse = await api.get(apiEndpoins.allCourse);
@@ -165,17 +187,16 @@ export const verifyToken = async () => {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("Token not found");
 
-    const res = await api.get(`/auth/verify-token`, {
-        method: "GET",
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
-
-    if (!res.status) throw new Error("Invalid or expired token");
-
-    return res.data
+    try {
+        const res = await api.get(`/auth/verify-token`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return res.data;
+    } catch (error) {
+        throw new Error("Invalid or expired token");
+    }
 };
-
 
 export default api;
