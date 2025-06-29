@@ -68,9 +68,7 @@ const UserPage = () => {
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        getMe().then((data) => {
-          console.log(data);
-          
+        getMe().then((data) => {          
           data.courses.map((courseId: any) => {
             GetCourseById(courseId.courseId).then((ddd) => {
               setUserCourses((prev) => [...prev, ddd]);

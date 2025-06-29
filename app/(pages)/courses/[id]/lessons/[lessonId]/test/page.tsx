@@ -20,19 +20,26 @@ export default function TestPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const [results, setResults] = useState<boolean[]>([]);
   const [finished, setFinished] = useState(false);
-  const stayback = useRouter()
+  const router = useRouter();
+
+  // 🧠 Foydalanuvchi ID olish
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const res = await api.get("/auth/me");
+        localStorage.setItem("userId", res.data.id);
+        console.log("🔑 userId saqlandi:", res.data.id);
+      } catch (err) {
+        console.error("❌ Userni olishda xatolik:", err);
+      }
+    };
+
+    fetchUserId();
+  }, []);
 
   const launchConfetti = () => {
-    confetti({
-      particleCount: 100,
-      spread: 90,
-      origin: { x: 0, y: 0.6 },
-    });
-    confetti({
-      particleCount: 100,
-      spread: 90,
-      origin: { x: 1, y: 0.6 },
-    });
+    confetti({ particleCount: 100, spread: 90, origin: { x: 0, y: 0.6 } });
+    confetti({ particleCount: 100, spread: 90, origin: { x: 1, y: 0.6 } });
   };
 
   useEffect(() => {
@@ -40,7 +47,6 @@ export default function TestPage() {
       launchConfetti();
     }
   }, [finished, results]);
-
 
   useEffect(() => {
     api.get(`/courses/${lessonId}/vocabulary-quiz`).then((res) => {
@@ -50,20 +56,40 @@ export default function TestPage() {
 
   const current = tests[index];
 
-  const handleAnswer = (answer: string) => {
+  const handleAnswer = async (answer: string) => {
     if (selected) return;
     setSelected(answer);
     const isCorrect = answer === current.correct;
     setResults((prev) => [...prev, isCorrect]);
 
-    setTimeout(() => {
+    setTimeout(async () => {
       if (index + 1 >= tests.length) {
         setFinished(true);
+
+        const correctCount = [...results, isCorrect].filter(Boolean).length;
+
+        // 📤 Natijani yuborish
         api.post(`/courses/${lessonId}/vocabulary-result`, {
           total: tests.length,
-          correct: [...results, isCorrect].filter(Boolean).length,
-          wrong: tests.length - [...results, isCorrect].filter(Boolean).length,
+          correct: correctCount,
+          wrong: tests.length - correctCount,
         });
+
+        // 🪙 5 coin berish
+        if (correctCount === tests.length) {
+          const userId = localStorage.getItem("userId");
+          if (userId) {
+            try {
+              await api.post("/user/coins", {
+                userId,
+                coins: 5,
+              });
+              console.log("✅ 5 coin qo‘shildi");
+            } catch (err) {
+              console.error("❌ Coin qo‘shishda xatolik:", err);
+            }
+          }
+        }
       } else {
         setIndex(index + 1);
         setSelected(null);
@@ -71,26 +97,27 @@ export default function TestPage() {
     }, 1000);
   };
 
-  if (!current) return <div className="mt-10 container scale-75 py-10 border border-white/10 rounded-2xl bg-white/5 shadow-2xl backdrop-blur-md text-center">
-          <div className="flex justify-center mb-4">
-            <div className="p-4 bg-white/10 rounded-full border border-white/20 shadow-inner">
-              <FileX size={32} className="text-red-400" />
-            </div>
+  if (!current)
+    return (
+      <div className="mt-10 container scale-75 py-10 border border-white/10 rounded-2xl bg-white/5 shadow-2xl backdrop-blur-md text-center">
+        <div className="flex justify-center mb-4">
+          <div className="p-4 bg-white/10 rounded-full border border-white/20 shadow-inner">
+            <FileX size={32} className="text-red-400" />
           </div>
-
-          <h2 className="text-2xl font-bold mb-2 text-white">Testlar topilmadi</h2>
-          <p className="text-gray-300 text-sm mb-6">
-            Ushbu dars uchun hozircha hech qanday test savollari mavjud emas. Admin tomonidan hali kiritilmagan bo‘lishi mumkin.
-          </p>
-
-          <button
-            onClick={() => window.location.reload()}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 transition text-sm text-white"
-          >
-            <RefreshCcw size={18} />
-            Qayta yuklash
-          </button>
-        </div>;
+        </div>
+        <h2 className="text-2xl font-bold mb-2 text-white">Testlar topilmadi</h2>
+        <p className="text-gray-300 text-sm mb-6">
+          Ushbu dars uchun hozircha hech qanday test savollari mavjud emas.
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 transition text-sm text-white"
+        >
+          <RefreshCcw size={18} />
+          Qayta yuklash
+        </button>
+      </div>
+    );
 
   return (
     <div className="flex justify-center items-center h-[60vh] px-4">
@@ -102,12 +129,18 @@ export default function TestPage() {
             <p>
               {results.filter(Boolean).length} / {tests.length} to‘g‘ri javob
             </p>
-            <span onClick={() => { stayback.back() }} className="px-7 py-3 bg-green-600 rounded-md cursor-pointer">Bosh Fahifaga qaytish</span>
+            <span
+              onClick={() => router.back()}
+              className="px-7 py-3 bg-green-600 rounded-md cursor-pointer"
+            >
+              Bosh sahifaga qaytish
+            </span>
           </div>
         ) : (
           <>
             <h1 className="text-xl font-semibold">
-              So‘z #{index + 1} / {tests.length}: <span className="text-yellow-400">{current.word}</span>
+              So‘z #{index + 1} / {tests.length}:{" "}
+              <span className="text-yellow-400">{current.word}</span>
             </h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {current.options.map((opt, i) => {
@@ -122,7 +155,9 @@ export default function TestPage() {
                     className={`w-full py-3 px-4 rounded-xl border transition-all duration-200
                       ${isCorrect ? "border-green-500 bg-green-900/50" : ""}
                       ${isWrong ? "border-red-500 bg-red-900/50" : ""}
-                      ${!isSelected && !isCorrect && !isWrong ? "border-neutral-600 hover:bg-neutral-800" : ""}
+                      ${!isSelected && !isCorrect && !isWrong
+                        ? "border-neutral-600 hover:bg-neutral-800"
+                        : ""}
                     `}
                   >
                     {opt}
@@ -140,7 +175,8 @@ export default function TestPage() {
                 ) : (
                   <>
                     <XCircle className="text-red-500" size={20} />
-                    Noto‘g‘ri. To‘g‘ri javob: <strong className="text-white">{current.correct}</strong>
+                    Noto‘g‘ri. To‘g‘ri javob:{" "}
+                    <strong className="text-white">{current.correct}</strong>
                   </>
                 )}
               </div>
