@@ -70,7 +70,7 @@ const Footer = () => {
                     <Icon
                       size={28}
                       strokeWidth={1}
-                      stroke={isActive ? "#00FF80" : "#00C835"}
+                      stroke={isActive ? "#fff" : "#00C835"}
                       className="mb-1"
                     />
                   </Link>
@@ -89,7 +89,7 @@ const Footer = () => {
                     <Icon
                       size={28}
                       strokeWidth={1}
-                      stroke={isActive ? "#00FF80" : "#00C835"}
+                      stroke={isActive ? "#fff" : "#00C835"}
                       className="mb-1"
                     />
                   </Link>
