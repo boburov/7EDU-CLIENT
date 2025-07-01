@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { CalendarDays, CalendarCheck, BarChart3 } from "lucide-react";
-import api from "@/app/api/service/api";
+import { CalendarDays, CalendarCheck, BarChart3, ListChecks } from "lucide-react";
+import api, { getMe } from "@/app/api/service/api";
 
 const Page = () => {
   const [missed, setMissed] = useState({
@@ -9,59 +9,85 @@ const Page = () => {
     month: 0,
     fourMonths: 0,
   });
-
+  const [missedDates, setMissedDates] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    api
-      .get("/user/user-activity")
-      .then((res) => {
-        const watchedDates = res.data?.showedLessons?.map((item: any) => new Date(item.watchedAt)) || [];
-        const createdAt = new Date(res.data?.createdAt);
+  function countMissedDays(startDateStr: string, endDateStr: string, watchedList: string[]) {
+    const start = new Date(startDateStr);
+    const end = new Date(endDateStr);
 
-        calculateMissedDays(watchedDates, createdAt);
-      })
-      .catch((err) => {
-        console.error("Davomatni olishda xatolik:", err);
-        setMissed({ week: 0, month: 0, fourMonths: 0 });
-      })
-      .finally(() => setLoading(false));
-  }, []);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
 
-  const calculateMissedDays = (watched: Date[], createdAt: Date) => {
-    const today = new Date();
+    const watchedSet = new Set(watchedList);
+    const missed: string[] = [];
 
-    const dateDiffInDays = (a: Date, b: Date) =>
-      Math.floor((a.getTime() - b.getTime()) / (1000 * 60 * 60 * 24));
-
-    const totalDays = dateDiffInDays(today, createdAt);
-
-    const missedDays = {
-      week: 0,
-      month: 0,
-      fourMonths: 0,
-    };
-
-    for (let i = 0; i <= totalDays; i++) {
-      const checkDate = new Date(today);
-      checkDate.setDate(today.getDate() - i);
-
-      const isWatched = watched.some(
-        (d) =>
-          d.getFullYear() === checkDate.getFullYear() &&
-          d.getMonth() === checkDate.getMonth() &&
-          d.getDate() === checkDate.getDate()
-      );
-
-      if (!isWatched) {
-        if (i < 7) missedDays.week++;
-        if (i < 30) missedDays.month++;
-        if (i < 120) missedDays.fourMonths++;
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const dateStr = `${yyyy}-${mm}-${dd}`;
+      if (!watchedSet.has(dateStr)) {
+        missed.push(dateStr);
       }
     }
 
-    setMissed(missedDays);
-  };
+    const today = new Date();
+    const normalize = (n: number) => {
+      const d = new Date(today);
+      d.setDate(d.getDate() - n);
+      d.setHours(0, 0, 0, 0);
+      return d;
+    };
+
+    const weekAgo = normalize(6);
+    const monthAgo = normalize(29);
+    const fourMonthsAgo = normalize(119);
+
+    const week = missed.filter(date => new Date(date) >= weekAgo).length;
+    const month = missed.filter(date => new Date(date) >= monthAgo).length;
+    const fourMonths = missed.filter(date => new Date(date) >= fourMonthsAgo).length;
+
+    return {
+      missedDates: missed,
+      countByRange: { week, month, fourMonths }
+    };
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const user = await getMe();
+        if (!user) throw new Error("User not found");
+
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        const todayStr = `${yyyy}-${mm}-${dd}`;
+
+        // TODO: Replace with real watched lesson dates from user.showedLesson
+        const watchedDates = user.showedLesson?.map((l: any) =>
+          l.watchedAt.substring(0, 10)
+        ) || [];
+
+        const { missedDates, countByRange } = countMissedDays(
+          user.createdAt.substring(0, 10),
+          todayStr,
+          watchedDates
+        );
+
+        setMissed(countByRange);
+        setMissedDates(missedDates);
+      } catch (error) {
+        console.error("Xatolik:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="container text-white space-y-6 pt-6 max-w-2xl mx-auto">
@@ -73,29 +99,33 @@ const Page = () => {
         <p className="text-center text-gray-400">Yuklanmoqda...</p>
       ) : (
         <>
-          <div className="flex items-center gap-5 w-full rounded-xl border border-gray-400/30 bg-gray-500/10 text-gray-300 px-6 py-5 shadow">
-            <CalendarDays className="text-gray-300" size={42} strokeWidth={1.5} />
-            <div className="flex flex-col">
-              <p className="text-xl font-medium">Haftalik</p>
-              <p className="text-lg text-white/70">{missed.week} kun qoldirilgan</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="flex items-center gap-5 w-full rounded-xl border border-gray-400/30 bg-gray-500/10 text-gray-300 px-6 py-5 shadow">
+              <CalendarDays className="text-gray-300" size={42} strokeWidth={1.5} />
+              <div className="flex flex-col">
+                <p className="text-xl font-medium">Haftalik</p>
+                <p className="text-lg text-white/70">{missed.week} kun qoldirilgan</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-5 w-full rounded-xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 px-6 py-5 shadow">
+              <CalendarCheck className="text-yellow-400" size={42} strokeWidth={1.5} />
+              <div className="flex flex-col">
+                <p className="text-xl font-medium">Oylik</p>
+                <p className="text-lg text-white/70">{missed.month} kun qoldirilgan</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-5 w-full rounded-xl border border-sky-500/30 bg-sky-500/10 text-sky-400 px-6 py-5 shadow">
+              <BarChart3 className="text-sky-400" size={42} strokeWidth={1.5} />
+              <div className="flex flex-col">
+                <p className="text-xl font-medium">So‘nggi 4 Oy</p>
+                <p className="text-lg text-white/70">{missed.fourMonths} kun qoldirilgan</p>
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-5 w-full rounded-xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 px-6 py-5 shadow">
-            <CalendarCheck className="text-yellow-400" size={42} strokeWidth={1.5} />
-            <div className="flex flex-col">
-              <p className="text-xl font-medium">Oyda</p>
-              <p className="text-lg text-white/70">{missed.month} kun qoldirilgan</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-5 w-full rounded-xl border border-sky-500/30 bg-sky-500/10 text-sky-400 px-6 py-5 shadow">
-            <BarChart3 className="text-sky-400" size={42} strokeWidth={1.5} />
-            <div className="flex flex-col">
-              <p className="text-xl font-medium">4 Oyda</p>
-              <p className="text-lg text-white/70">{missed.fourMonths} kun qoldirilgan</p>
-            </div>
-          </div>
+          
         </>
       )}
     </div>
