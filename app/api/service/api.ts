@@ -2,7 +2,7 @@ import axios from 'axios';
 import apiEndpoins from '../api.endpoin';
 
 const api = axios.create({
-    baseURL: `http://localhost:3000/`
+    baseURL: `https://sevenedu.store/`
     //  || 'https://sevenedu.store/',
 });
 
