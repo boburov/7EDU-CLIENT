@@ -4,7 +4,7 @@ import { forgotPassword, login } from "@/app/api/service/api";
 import { ArrowLeft, School } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -24,10 +24,11 @@ const Login = () => {
 
     try {
       const data = await login({ email, password });
-
-      if (data) {
-        const userId = data.checkId.userID;
-        router.push(`/user/${userId}`);
+      console.log(data);
+      
+      if (data && data.token && data.checkId.userID) {
+        localStorage.setItem("token", data.token);
+        router.push(`/user/${data.checkId.userID}`);
       } else {
         setMsg("Login muvaffaqiyatsiz");
       }
@@ -39,6 +40,7 @@ const Login = () => {
       setLoading(false);
     }
   };
+
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,6 +60,14 @@ const Login = () => {
     }
   };
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("userId");
+
+    if (token && userId) {
+      router.push(`/user/${userId}`);
+    }
+  }, []);
   return (
     <section className="container pt-5">
       <Link href="/">
@@ -96,9 +106,8 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-3 rounded-md text-xl font-bold text-white mb-2 ${
-                loading ? "bg-[#00C835]/60 cursor-not-allowed" : "bg-[#00C835]"
-              }`}
+              className={`w-full py-3 rounded-md text-xl font-bold text-white mb-2 ${loading ? "bg-[#00C835]/60 cursor-not-allowed" : "bg-[#00C835]"
+                }`}
             >
               {loading ? "Kirish..." : "Kirish"}
             </button>
@@ -127,9 +136,8 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-3 rounded-md text-xl font-bold text-white mb-2 ${
-                loading ? "bg-[#00C835]/60 cursor-not-allowed" : "bg-[#00C835]"
-              }`}
+              className={`w-full py-3 rounded-md text-xl font-bold text-white mb-2 ${loading ? "bg-[#00C835]/60 cursor-not-allowed" : "bg-[#00C835]"
+                }`}
             >
               {loading ? "Yuborilmoqda..." : "Parolni tiklash"}
             </button>

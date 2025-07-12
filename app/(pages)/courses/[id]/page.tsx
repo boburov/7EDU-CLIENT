@@ -1,6 +1,6 @@
 "use client";
 
-import { GetCourseById } from "@/app/api/service/api";
+import { GetCourseById, getMe } from "@/app/api/service/api";
 import { Lock, Play } from "lucide-react";
 import { motion } from "framer-motion";
 import { useParams } from "next/navigation";
@@ -14,17 +14,44 @@ interface Lesson {
   isDemo?: boolean;
 }
 
+interface UserCourse {
+  courseId: string;
+}
+
+interface User {
+  id: string;
+  name: string;
+  courses: UserCourse[];
+}
+
 const Page = () => {
   const params = useParams();
   const courseId = params.id;
 
   const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [userHasCourse, setUserHasCourse] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!courseId) return;
-    GetCourseById(String(courseId)).then((res) => {
-      setLessons(res?.lessons || []);
-    });
+    const fetchData = async () => {
+      if (!courseId) return;
+
+      // 1. Kursni olish
+      const course = await GetCourseById(String(courseId));
+      setLessons(course?.lessons || []);
+
+      // 2. Foydalanuvchining shu kursni olgan-olmaganini tekshirish
+      try {
+        const user: User = await getMe();
+        const hasCourse = user.courses?.some(
+          (uc) => uc.courseId === String(courseId)
+        );
+        setUserHasCourse(!!hasCourse); // 👉 True bo‘lsa barcha ochiq
+      } catch (err) {
+        setUserHasCourse(false); // ❌ Token yo‘q yoki foydalanuvchi topilmadi
+      }
+    };
+
+    fetchData();
   }, [courseId]);
 
   return (
@@ -41,7 +68,8 @@ const Page = () => {
       ) : (
         <div className="space-y-6">
           {lessons.map((lesson, index) => {
-            const isLocked = lesson.isDemo === false;
+            const isLocked = !userHasCourse && lesson.isDemo === false;
+
             const url = isLocked
               ? "https://t.me/GraffDracula"
               : `${courseId}/lessons/${lesson.id}`;
@@ -51,14 +79,14 @@ const Page = () => {
             return (
               <Wrapper
                 href={url}
-                target={`${isLocked ? "_blank" : ""}`}
+                target={isLocked ? "_blank" : ""}
                 key={index}
                 className="block"
               >
                 <motion.div
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  transition={{ duration: 0.5, delay: index * 0.05 }}
                   className="flex items-center justify-between bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-5 hover:scale-[1.01] transition-transform duration-300"
                 >
                   <div>
@@ -72,14 +100,10 @@ const Page = () => {
                   </div>
 
                   <div className="flex flex-col items-center">
-                    {lesson.isDemo ? (
-                      <>
-                        <Play className="w-8 h-8 text-green-400" />
-                      </>
+                    {isLocked ? (
+                      <Lock className="w-10 h-10 text-green-700" />
                     ) : (
-                      <>
-                        <Lock className="w-10 h-10 text-green-700" />
-                      </>
+                      <Play className="w-8 h-8 text-green-400" />
                     )}
                   </div>
                 </motion.div>
