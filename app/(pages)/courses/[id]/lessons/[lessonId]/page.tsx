@@ -22,6 +22,7 @@ interface Lesson {
   quizs: [];
   dictonary: [];
 }
+
 const Page = () => {
   const path = useParams();
   const lessonId = String(path.lessonId);
@@ -49,6 +50,16 @@ const Page = () => {
         console.error("Xatolik yuz berdi:", err);
       });
   }, [lessonId]);
+
+  // 🔧 Video URL tozalovchi funksiya
+  const getCorrectVideoUrl = (url: string): string => {
+    if (url.includes("sevenedu.store")) return url;
+
+    const filename = url.split("/").pop(); // "1752060391578-1751973178413.MOV"
+    const parts = filename?.split("-");
+    const finalPart = parts?.[parts.length - 1];
+    return `https://sevenedu-bucket.s3.eu-north-1.amazonaws.com/videos/${finalPart}`;
+  };
 
   const togglePlay = () => {
     const video = videoRef.current;
@@ -158,6 +169,9 @@ const Page = () => {
     }
   };
 
+  // 🔧 Final cleaned URL
+  const cleanedVideoUrl = lesson?.videoUrl ? getCorrectVideoUrl(lesson.videoUrl) : "";
+
   return (
     <div
       ref={containerRef}
@@ -173,7 +187,7 @@ const Page = () => {
           disablePictureInPicture
           controlsList="nodownload nofullscreen noremoteplayback"
           className="w-full h-full object-contain bg-black"
-          src={lesson?.videoUrl}
+          src={cleanedVideoUrl}
         />
         <div
           className="absolute inset-0 left-0 w-full cursor-pointer"
@@ -188,19 +202,10 @@ const Page = () => {
         } z-10`}
       >
         <div className="flex items-center gap-4 px-4 py-3 bg-black/80 backdrop-blur-md border border-white/10 text-white rounded-xl shadow-lg">
-          <button
-            onClick={seekBackward}
-            title="2s orqaga"
-            className="hover:text-blue-400 transition"
-          >
+          <button onClick={seekBackward} title="2s orqaga">
             <LucideSkipBack size={24} />
           </button>
-
-          <button
-            onClick={togglePlay}
-            title="Oynat/Pauza"
-            className="hover:text-green-400 transition"
-          >
+          <button onClick={togglePlay} title="Oynat/Pauza">
             {isPlaying ? (
               <PauseCircle strokeWidth={1} size={28} />
             ) : (
@@ -226,12 +231,7 @@ const Page = () => {
               style={{ width: `${progress}%` }}
             />
           </div>
-
-          <button
-            onClick={toggleFullscreen}
-            title="Fullscreen"
-            className="hover:text-yellow-400 transition"
-          >
+          <button onClick={toggleFullscreen} title="Fullscreen">
             {isFullscreen ? <Minimize size={24} /> : <Maximize size={24} />}
           </button>
         </div>
@@ -242,9 +242,7 @@ const Page = () => {
           href={`${lessonId}/vocabulary`}
           className="w-full h-20 bg-yellow-400/10 border border-yellow-600 flex items-center gap-5 px-5 text-yellow-400 rounded-md hover:scale-[1.02] transition-all duration-300 shadow-sm"
         >
-          <div className="text-3xl">
-            <Languages size={30} strokeWidth={1} />
-          </div>
+          <Languages size={30} strokeWidth={1} />
           <div>
             <div className="text-lg font-semibold">{`Lug'at`}</div>
             <div className="text-sm text-yellow-300">{`Yangi so'zlarni yodlang va mashq qiling`}</div>
@@ -255,9 +253,7 @@ const Page = () => {
           href={`${lessonId}/test`}
           className="w-full h-20 bg-purple-400/10 border border-purple-700 flex items-center gap-5 px-5 text-purple-400 rounded-md hover:scale-[1.02] transition-all duration-300 shadow-sm"
         >
-          <div className="text-3xl">
-            <ListChecks size={30} strokeWidth={1} />
-          </div>
+          <ListChecks size={30} strokeWidth={1} />
           <div>
             <div className="text-lg font-semibold">Test</div>
             <div className="text-sm text-purple-300">{`Bilimingizni tekshiring va yutuqlaringizni ko‘ring`}</div>
@@ -265,12 +261,10 @@ const Page = () => {
         </Link>
 
         <Link
-          href={`${lessonId}/quiz`.toLowerCase()}
+          href={`${lessonId}/quiz`}
           className="w-full h-20 bg-blue-400/10 border border-blue-700 flex items-center gap-5 px-5 text-blue-400 rounded-md hover:scale-[1.02] transition-all duration-300 shadow-sm"
         >
-          <div className="text-3xl">
-            <ListChecks size={30} strokeWidth={1} />
-          </div>
+          <ListChecks size={30} strokeWidth={1} />
           <div>
             <div className="text-lg font-semibold">Savollar</div>
             <div className="text-sm text-blue-300">{`Tushunmagan joylaringizni takror ko‘rib chiqing`}</div>
@@ -278,12 +272,10 @@ const Page = () => {
         </Link>
 
         <Link
-          href={`${lessonId}/ask-for-ai`.toLowerCase()}
+          href={`${lessonId}/ask-for-ai`}
           className="w-full h-20 bg-emerald-400/10 border border-emerald-700 flex items-center gap-5 px-5 text-emerald-400 rounded-md hover:scale-[1.02] transition-all duration-300 shadow-sm"
         >
-          <div className="text-3xl">
-            <MessageCircleQuestion size={30} strokeWidth={1} />
-          </div>
+          <MessageCircleQuestion size={30} strokeWidth={1} />
           <div>
             <div className="text-lg font-semibold">{`Ustozdan so‘rash`}</div>
             <div className="text-sm text-emerald-300">{`Savolingizni ustozga bevosita yuboring`}</div>
