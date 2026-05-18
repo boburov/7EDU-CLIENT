@@ -169,7 +169,7 @@ const Page = () => {
   const vimeoId = isVimeo ? cleanedVideoUrl.replace("vimeo:", "") : "";
 
   const vimeoSrc = vimeoId
-    ? `https://player.vimeo.com/video/${vimeoId}?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479&share=0&dnt=1&pip=0`
+    ? `https://player.vimeo.com/video/${vimeoId}?sharing=0&byline=0&title=0&portrait=0`
     : "";
 
   return (
