@@ -169,7 +169,7 @@ const Page = () => {
   const vimeoId = isVimeo ? cleanedVideoUrl.replace("vimeo:", "") : "";
 
   const vimeoSrc = vimeoId
-    ? `https://player.vimeo.com/video/${vimeoId}?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479`
+    ? `https://player.vimeo.com/video/${vimeoId}?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479&share=0&dnt=1&pip=0`
     : "";
 
   return (
@@ -186,7 +186,7 @@ const Page = () => {
             <iframe
               src={vimeoSrc}
               frameBorder="0"
-              allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+              allow="autoplay; fullscreen; encrypted-media"
               referrerPolicy="strict-origin-when-cross-origin"
               style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
               title="Vimeo video"
