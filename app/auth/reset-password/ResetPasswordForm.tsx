@@ -27,7 +27,7 @@ export default function ResetPasswordForm() {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch("https://api.sevenedu.store/auth/reset-password", {
+            const res = await fetch("https://api.sevenedu.org/auth/reset-password", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ token, password }),

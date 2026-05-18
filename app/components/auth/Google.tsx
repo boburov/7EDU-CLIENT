@@ -25,7 +25,7 @@ export default function GoogleButton() {
     const onMessage = (event: MessageEvent) => {
       const allowedOrigins = [
         process.env.NEXT_PUBLIC_APP_ORIGIN,
-        "https://api.sevenedu.store",
+        "https://api.sevenedu.org",
       ];
 
       if (!allowedOrigins.includes(event.origin)) return;
@@ -94,7 +94,7 @@ export default function GoogleButton() {
     const top = window.screenY + (window.outerHeight - height) / 2;
 
     const popup = window.open(
-      `https://api.sevenedu.store/auth/google`,
+      `https://api.sevenedu.org/auth/google`,
       "google_oauth",
       `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
     );
