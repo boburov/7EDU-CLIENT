@@ -2,7 +2,7 @@
 
 import api from "@/app/api/service/api";
 import { useParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Languages, ListChecks, MessageCircleQuestion, Mic } from "lucide-react";
 import Link from "next/link";
 
@@ -20,12 +20,8 @@ const ARAB_ID = "818e97e4-8b6b-481a-99ed-547ee53ba3eb";
 const NEMIS_TILI = "16c43a51-8c65-4a29-995c-f2e8ab0d6073";
 const TURK_TILI = "4154be26-c57d-4c2a-bce5-03205dedb8f7";
 
-const SPECIAL_ID = "a06d565b-1d61-4564-af5d-1ceb4cfb3f6b";
-const SECOND_SPECIAL_ID = "a86c8621-b83a-4481-ac66-4176f067ca18";
-const THIRD_SPECIAL_ID = "16c43a51-8c65-4a29-995c-f2e8ab0d6073";
-
 type JsonVideo = {
-  key: string;
+  key?: string;
   url?: string; // Vimeo URL: "https://vimeo.com/1234567890"
 };
 
@@ -42,93 +38,37 @@ const jsonOverrides: Record<string, JsonCourse> = {
   [TURK_TILI]: turk_tili as JsonCourse,
 };
 
-/** "https://vimeo.com/1174582208" → "1174582208" */
-function extractVimeoId(url: string): string {
-  return url.split("/").pop() ?? "";
-}
+/**
+ * Har qanday Vimeo manbasidan ("https://vimeo.com/1174582208",
+ * "vimeo:1174582208", yoki shunchaki "1174582208") Vimeo ID ni ajratib oladi.
+ */
+function toVimeoId(input?: string): string {
+  if (!input) return "";
 
-function getJsonVideoUrlByLessonNumber(categoryId: string, lessonNumber: number): string {
-  const course = jsonOverrides[categoryId];
-  const item = course?.videos?.[lessonNumber - 1];
-  if (!item) return "";
+  const value = input.trim();
+  const raw = value.startsWith("vimeo:") ? value.slice("vimeo:".length) : value;
+  const candidate = raw.split("?")[0].split("/").pop() ?? "";
 
-  if (item.url) {
-    const vimeoId = extractVimeoId(item.url);
-    return vimeoId ? `vimeo:${vimeoId}` : "";
-  }
-
-  if (!item.key) return "";
-  return `https://sevenedu-bucet.s3.eu-north-1.amazonaws.com/${encodeURIComponent(item.key)}`;
-}
-
-function getCorrectVideoUrl(url: string, categoryId: string, lessonIndex?: number): string {
-  if (!url) return "";
-
-  const filename = url.split("/").pop() || "";
-  const cleanedFilename = filename.replace(/^\d{13}-/, "");
-  if (!cleanedFilename) return url;
-
-  const lessonNumber = lessonIndex !== undefined ? lessonIndex + 1 : undefined;
-
-  if (
-    (categoryId === SPECIAL_ID && lessonNumber && lessonNumber > 25) ||
-    (categoryId === THIRD_SPECIAL_ID && lessonNumber && lessonNumber > 32) ||
-    categoryId === SECOND_SPECIAL_ID
-  ) {
-    return `https://s3.eu-north-1.amazonaws.com/seven.edu/videos/${cleanedFilename}`;
-  }
-
-  return `https://sevenedu-s3.s3.eu-north-1.amazonaws.com/videos/${cleanedFilename}`;
+  return /^\d+$/.test(candidate) ? candidate : "";
 }
 
 /**
- * Ingliz tili kurslari jsonOverrides ro'yxatida yo'q.
- * Qolgan barcha kurslar (rus, xitoy, koreys, arab, nemis, turk) uchun:
- *   1. Avval JSON fayldan URL qidiriladi (mavjud bo'lsa — ishlatiladi)
- *   2. JSON da topilmasa — backenddan kelgan videoUrl ni Vimeo sifatida ishlatadi
- * Ingliz tili kurslari uchun: S3 URL qaytaradi (avvalgi mantiq)
+ * Endi barcha kurslar videolari Vimeodan keladi.
+ *   1. Avval JSON fayldan Vimeo URL qidiriladi (mavjud bo'lsa — ishlatiladi)
+ *   2. JSON da topilmasa — backenddan kelgan videoUrl Vimeo sifatida ishlatiladi
  */
-function resolveVideoUrl(params: {
+function resolveVimeoId(params: {
   categoryId: string;
   lessonIndex: number;
   backendVideoUrl?: string;
 }): string {
   const { categoryId, lessonIndex, backendVideoUrl } = params;
 
-  const isJsonCourse = categoryId in jsonOverrides;
+  const jsonUrl = jsonOverrides[categoryId]?.videos?.[lessonIndex]?.url;
+  const fromJson = toVimeoId(jsonUrl);
+  if (fromJson) return fromJson;
 
-  if (isJsonCourse) {
-    const jsonUrl = getJsonVideoUrlByLessonNumber(categoryId, lessonIndex + 1);
-    if (jsonUrl) return jsonUrl;
-
-    // 2. JSON da topilmasa — backenddan kelgan URL ni Vimeo sifatida ishlatamiz
-    if (backendVideoUrl) {
-      if (backendVideoUrl.startsWith("vimeo:")) return backendVideoUrl;
-
-      if (backendVideoUrl.includes("vimeo.com/")) {
-        const vimeoId = extractVimeoId(backendVideoUrl);
-        return vimeoId ? `vimeo:${vimeoId}` : "";
-      }
-
-      if (/^\d+$/.test(backendVideoUrl.trim())) {
-        return `vimeo:${backendVideoUrl.trim()}`;
-      }
-
-      const extracted = extractVimeoId(backendVideoUrl);
-      if (extracted && /^\d+$/.test(extracted)) {
-        return `vimeo:${extracted}`;
-      }
-
-      // Har qanday holatda ham — JSON kurs bo'lsa Vimeo deb belgilaymiz
-      return `vimeo:${backendVideoUrl}`;
-    }
-
-    return "";
-  }
-
-  // Ingliz tili — S3
-  if (backendVideoUrl) return getCorrectVideoUrl(backendVideoUrl, categoryId, lessonIndex);
-  return "";
+  return toVimeoId(backendVideoUrl);
 }
 
 const Page = () => {
@@ -136,8 +76,7 @@ const Page = () => {
   const lessonId = String(params.lessonId);
   const category_id = String(params.id);
 
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [cleanedVideoUrl, setCleanedVideoUrl] = useState("");
+  const [vimeoId, setVimeoId] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -153,20 +92,17 @@ const Page = () => {
 
       const lesson = category.lessons[lessonIndex];
 
-      const finalUrl = resolveVideoUrl({
+      const id = resolveVimeoId({
         categoryId: category_id,
         lessonIndex,
         backendVideoUrl: lesson?.videoUrl,
       });
 
-      if (finalUrl) setCleanedVideoUrl(finalUrl);
+      if (id) setVimeoId(id);
     });
 
     return () => { cancelled = true; };
   }, [lessonId, category_id]);
-
-  const isVimeo = cleanedVideoUrl.startsWith("vimeo:");
-  const vimeoId = isVimeo ? cleanedVideoUrl.replace("vimeo:", "") : "";
 
   const vimeoSrc = vimeoId
     ? `https://player.vimeo.com/video/${vimeoId}?sharing=0&byline=0&title=0&portrait=0`
@@ -178,11 +114,11 @@ const Page = () => {
       {/* Video */}
       <div className="rounded-2xl border border-border bg-surface shadow-card overflow-hidden">
         <div style={{ padding: "56.25% 0 0 0", position: "relative" }}>
-          {!cleanedVideoUrl ? (
+          {!vimeoId ? (
             <div className="absolute inset-0 grid place-items-center bg-black">
               <span className="text-sm text-white/50">Video yuklanmoqda…</span>
             </div>
-          ) : isVimeo ? (
+          ) : (
             <iframe
               src={vimeoSrc}
               frameBorder="0"
@@ -190,16 +126,6 @@ const Page = () => {
               referrerPolicy="strict-origin-when-cross-origin"
               style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
               title="Vimeo video"
-            />
-          ) : (
-            <video
-              ref={videoRef}
-              src={cleanedVideoUrl}
-              controls
-              controlsList="nodownload"
-              onContextMenu={(e) => e.preventDefault()}
-              style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
-              className="object-contain bg-black"
             />
           )}
         </div>
