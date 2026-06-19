@@ -28,7 +28,10 @@ const placeholderThumbnail = "/images/course-placeholder.jpg";
 
 const getSafeThumbnail = (originalUrl: string) => {
   if (!originalUrl) return placeholderThumbnail;
-  if (originalUrl.includes("s3.eu-north-1.amazonaws.com/seven.edu/")) return originalUrl;
+  // Har qanday to'liq http(s) URL'ni xom holda ishlatamiz:
+  // eski S3 (s3.eu-north-1.amazonaws.com) va yangi VPS (api.sevenedu.org/uploads/...) manzillari.
+  if (/^https?:\/\//i.test(originalUrl)) return originalUrl;
+  // Faqat nisbiy /images/<fayl> yo'llari uchun eski S3 rewrite (legacy).
   const match = originalUrl.match(/\/images\/([^/?]+(\.png|\.jpg|\.jpeg|\.webp|\.gif))/i);
   if (match) return `https://s3.eu-north-1.amazonaws.com/seven.edu/images/${match[1]}`;
   return placeholderThumbnail;
