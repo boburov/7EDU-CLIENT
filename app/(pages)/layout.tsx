@@ -32,7 +32,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       try {
         const token = localStorage.getItem("token");
         if (!token) {
-          router.push("/");
+          router.replace("/auth/login");
           return;
         }
 
@@ -43,11 +43,17 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           response?: { status: number };
           message?: string;
         };
+        // Faqat token yaroqsiz/eskirgan bo'lsa (401) — sessiyani tozalab login
+        // ekraniga yo'naltiramiz. Tarmoq/server xatosida (masalan, 500 yoki
+        // ulanish uzilishi) tokenni o'chirmaymiz, aks holda vaqtinchalik nosozlik
+        // foydalanuvchini tizimdan chiqarib yuboradi.
         if (
           err?.response?.status === 401 ||
           err.message === "Token bekor qilindi"
         ) {
-          router.push("/");
+          localStorage.removeItem("token");
+          localStorage.removeItem("userId");
+          router.replace("/auth/login");
         } else {
           console.error("Foydalanuvchi ma'lumotini olishda xatolik:", error);
         }

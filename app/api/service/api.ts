@@ -18,9 +18,33 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+// Auth talab qilmaydigan endpointlar — bu yerda 401 (masalan, noto'g'ri parol)
+// kelganda foydalanuvchini login ekraniga uloqtirmaslik kerak, oddiy xatolik
+// sifatida ko'rsatiladi.
+const AUTH_FREE_PATHS = [
+  '/auth/login',
+  '/auth/register',
+  '/auth/verify',
+  '/auth/forgot-password',
+  '/auth/reset-password',
+];
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    const status = error.response?.status;
+    const url: string = error.config?.url || '';
+    const isAuthFreePath = AUTH_FREE_PATHS.some((p) => url.includes(p));
+
+    // Token eskirgan/yaroqsiz (401) — sessiyani markazlashgan tarzda tozalaymiz.
+    // Bu har bir chaqiruvchining alohida 401 logikasiga tayanmasdan, butun
+    // ilovada bir xil xatti-harakatni ta'minlaydi va login/logout aylanishini
+    // (loop) oldini oladi.
+    if (status === 401 && !isAuthFreePath && typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+    }
+
     // Productionda sensitive ma'lumotlarni yashirish
     if (process.env.NODE_ENV === 'production') {
       const data = { ...error.response?.data };
