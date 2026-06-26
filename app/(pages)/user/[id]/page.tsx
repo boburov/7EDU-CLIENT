@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import ProgressSection from "@/app/components/UserProgress";
+import { getSafeThumbnail, PLACEHOLDER_THUMBNAIL } from "@/app/lib/thumbnail";
 
 interface Course {
   id: string;
@@ -30,23 +31,6 @@ const UserPage = () => {
   const [user, setUser] = useState<User | null>(null);
   const [courses, setCourses] = useState<Course[]>([]);
   const [userCourses, setUserCourses] = useState<Course[]>([]);
-
-  const placeholderThumbnail = "/images/course-placeholder.jpg";
-
-  const getSafeThumbnail = (originalUrl: string): string => {
-    if (!originalUrl) return placeholderThumbnail;
-    // Har qanday to'liq http(s) URL'ni xom holda ishlatamiz:
-    // eski S3 (s3.eu-north-1.amazonaws.com) va yangi VPS (api.sevenedu.org/uploads/...) manzillari.
-    if (/^https?:\/\//i.test(originalUrl)) return originalUrl;
-    // Faqat nisbiy /images/<fayl> yo'llari uchun eski S3 rewrite (legacy).
-    const match = originalUrl.match(
-      /\/images\/([^/?]+(\.png|\.jpg|\.jpeg|\.webp|\.gif))/i
-    );
-    if (match) {
-      return `https://s3.eu-north-1.amazonaws.com/seven.edu/images/${match[1]}`;
-    }
-    return placeholderThumbnail;
-  };
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -99,8 +83,14 @@ const UserPage = () => {
                     src={getSafeThumbnail(kurs.thumbnail)}
                     alt={kurs.title}
                     fill
+                    sizes="208px"
                     className="object-cover"
                     unoptimized
+                    onError={(e) => {
+                      const img = e.currentTarget;
+                      if (img.src.endsWith(PLACEHOLDER_THUMBNAIL)) return;
+                      img.src = PLACEHOLDER_THUMBNAIL;
+                    }}
                   />
                 </div>
 
@@ -173,6 +163,11 @@ const UserPage = () => {
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 45vw, 40vw"
                       className={`object-cover ${isOwned ? "" : "opacity-60"}`}
                       unoptimized
+                      onError={(e) => {
+                        const img = e.currentTarget;
+                        if (img.src.endsWith(PLACEHOLDER_THUMBNAIL)) return;
+                        img.src = PLACEHOLDER_THUMBNAIL;
+                      }}
                     />
 
                     {!isOwned && (

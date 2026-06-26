@@ -5,6 +5,7 @@ import { Lock, Play, BookOpen, Search, Filter } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import { getSafeThumbnail, PLACEHOLDER_THUMBNAIL } from "@/app/lib/thumbnail";
 
 interface Course {
   id: string;
@@ -23,19 +24,6 @@ interface User {
   phonenumber: string;
   coin: number;
 }
-
-const placeholderThumbnail = "/images/course-placeholder.jpg";
-
-const getSafeThumbnail = (originalUrl: string) => {
-  if (!originalUrl) return placeholderThumbnail;
-  // Har qanday to'liq http(s) URL'ni xom holda ishlatamiz:
-  // eski S3 (s3.eu-north-1.amazonaws.com) va yangi VPS (api.sevenedu.org/uploads/...) manzillari.
-  if (/^https?:\/\//i.test(originalUrl)) return originalUrl;
-  // Faqat nisbiy /images/<fayl> yo'llari uchun eski S3 rewrite (legacy).
-  const match = originalUrl.match(/\/images\/([^/?]+(\.png|\.jpg|\.jpeg|\.webp|\.gif))/i);
-  if (match) return `https://s3.eu-north-1.amazonaws.com/seven.edu/images/${match[1]}`;
-  return placeholderThumbnail;
-};
 
 type Tab = "all" | "mine";
 
@@ -173,8 +161,14 @@ const CoursesPage = () => {
                       src={getSafeThumbnail(kurs.thumbnail)}
                       alt={kurs.title}
                       fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className={`object-cover transition-transform duration-500 group-hover:scale-105 ${!isOwned ? "opacity-65" : ""}`}
                       unoptimized
+                      onError={(e) => {
+                        const img = e.currentTarget;
+                        if (img.src.endsWith(PLACEHOLDER_THUMBNAIL)) return;
+                        img.src = PLACEHOLDER_THUMBNAIL;
+                      }}
                     />
 
                     {/* gradient */}
