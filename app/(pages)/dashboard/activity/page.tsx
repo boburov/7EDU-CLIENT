@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { CalendarDays, CalendarCheck, BarChart3, ListChecks } from "lucide-react";
+import { CalendarDays, CalendarCheck, BarChart3 } from "lucide-react";
 import api, { getMe } from "@/app/api/service/api";
 
 const Page = () => {
@@ -90,42 +90,40 @@ const Page = () => {
   }, []);
 
   return (
-    <div className="container text-white space-y-6 pt-6 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-semibold flex items-center gap-3 text-center w-full">
+    <div className="container space-y-6 pt-6 max-w-2xl mx-auto">
+      <h1 className="text-2xl font-semibold text-text-primary text-center w-full">
         O&apos;quvchining Davomat Qismi
       </h1>
 
       {loading ? (
-        <p className="text-center text-gray-400">Yuklanmoqda...</p>
+        <p className="text-center text-text-secondary">Yuklanmoqda...</p>
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex items-center gap-5 w-full rounded-xl border border-gray-400/30 bg-gray-500/10 text-gray-300 px-6 py-5 shadow">
-              <CalendarDays className="text-gray-300" size={42} strokeWidth={1.5} />
+            <div className="flex items-center gap-5 w-full rounded-2xl border border-slate-200 bg-slate-50 px-6 py-5 shadow-card">
+              <CalendarDays className="text-slate-500 shrink-0" size={40} strokeWidth={1.5} />
               <div className="flex flex-col">
-                <p className="text-xl font-medium">Haftalik</p>
-                <p className="text-lg text-white/70">{missed.week} kun qoldirilgan</p>
+                <p className="text-xl font-semibold text-text-primary">Haftalik</p>
+                <p className="text-base text-text-secondary">{missed.week} kun qoldirilgan</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-5 w-full rounded-xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 px-6 py-5 shadow">
-              <CalendarCheck className="text-yellow-400" size={42} strokeWidth={1.5} />
+            <div className="flex items-center gap-5 w-full rounded-2xl border border-amber-200 bg-amber-50 px-6 py-5 shadow-card">
+              <CalendarCheck className="text-amber-500 shrink-0" size={40} strokeWidth={1.5} />
               <div className="flex flex-col">
-                <p className="text-xl font-medium">Oylik</p>
-                <p className="text-lg text-white/70">{missed.month} kun qoldirilgan</p>
+                <p className="text-xl font-semibold text-amber-700">Oylik</p>
+                <p className="text-base text-text-secondary">{missed.month} kun qoldirilgan</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-5 w-full rounded-xl border border-sky-500/30 bg-sky-500/10 text-sky-400 px-6 py-5 shadow">
-              <BarChart3 className="text-sky-400" size={42} strokeWidth={1.5} />
+            <div className="flex items-center gap-5 w-full rounded-2xl border border-sky-200 bg-sky-50 px-6 py-5 shadow-card">
+              <BarChart3 className="text-sky-500 shrink-0" size={40} strokeWidth={1.5} />
               <div className="flex flex-col">
-                <p className="text-xl font-medium">So‘nggi 4 Oy</p>
-                <p className="text-lg text-white/70">{missed.fourMonths} kun qoldirilgan</p>
+                <p className="text-xl font-semibold text-sky-700">So‘nggi 4 Oy</p>
+                <p className="text-base text-text-secondary">{missed.fourMonths} kun qoldirilgan</p>
               </div>
             </div>
           </div>
-
-          
         </>
       )}
     </div>

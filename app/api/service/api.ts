@@ -185,6 +185,41 @@ export const allUsers = async () => {
     return await api.get("user/all")
 }
 
+// Reyting — coin bo'yicha top 100 o'quvchi + joriy foydalanuvchining o'rni.
+// `user/all` admin-only bo'lgani uchun oddiy foydalanuvchilar shu endpointdan foydalanadi.
+export const getLeaderboard = async () => {
+    const res = await api.get("user/leaderboard");
+    return res.data as {
+        leaderboard: Array<{
+            id: string;
+            name?: string;
+            surname?: string;
+            profilePic?: string;
+            coins: number;
+            rank: number;
+        }>;
+        currentUser: {
+            id: string;
+            name?: string;
+            surname?: string;
+            profilePic?: string;
+            coins: number;
+            rank: number;
+        } | null;
+    };
+};
+
+// Kunlik statistika (vocabulary / quiz / test) — GitHub activity uslubidagi grafik uchun.
+export const getDailyStats = async () => {
+    const res = await api.get("user/daily-stats");
+    return res.data as Array<{
+        date: string;
+        vocabulary: { total: number; correct: number };
+        quiz: { total: number; correct: number };
+        test: { total: number; correct: number };
+    }>;
+};
+
 // ai usage
 export const sendrequestForAI = async (lessonId: string, message: string, userId: string) => {
     const response = await api.post('/user/chat', {
