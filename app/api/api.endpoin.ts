@@ -1,5 +1,3 @@
-import { mark } from "framer-motion/client";
-
 const main_url = {
   auth: "auth",
   course: "courses",
@@ -23,7 +21,7 @@ const apiEndpoins = {
   getLessonById: (id: string) => `${main_url.course}/lessons/${id}`,
   markLessonSeen: `${main_url.user}/mark-lesson-seen`,
   oneQuiz: (id: string) => `${main_url.quiz}/${id}`,
-  
+
   deleteQuiz: (id: string) => `${main_url.quiz}/${id}`,
   createQuiz: (id: string) => `${main_url.quiz}/${id}/new-quiz`,
   updateUser: (id: string) => `${main_url.user}/update/${id}`,
