@@ -6,8 +6,14 @@ export const metadata = {
   title: "SevenEdu Web App",
   description: "Platformaga kirish usulini tanlang. O‘quvchi sifatida kirish · Mehmon sifatida kirish.",
   icons: {
-    icon: "./favicon.ico",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/icon-512.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: "/apple-touch-icon.png",
   },
+  manifest: "/site.webmanifest",
   openGraph: {
     title: "SevenEdu Web App",
     description: "Platformaga kirish usulini tanlang. O‘quvchi sifatida kirish · Mehmon sifatida kirish.",
