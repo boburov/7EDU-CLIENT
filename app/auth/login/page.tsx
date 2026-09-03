@@ -6,6 +6,37 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+/**
+ * Login xatosini foydalanuvchi o'qiy oladigan matnga aylantiradi.
+ *
+ * Serverning ichki xatosi (5xx) — bu foydalanuvchining aybi emas va uning
+ * "Internal server error" degan matni unga hech narsa aytmaydi: parolini
+ * qayta-qayta terib ovora bo'ladi. Shuning uchun 5xx va tarmoq uzilishi
+ * alohida, tushunarli xabar oladi; 4xx da esa serverning o'z matni ko'rsatiladi
+ * ("Parol noto'g'ri" kabi) — u aynan foydalanuvchi uchun yozilgan.
+ */
+function loginErrorMessage(error: any): string {
+  const status: number | undefined = error?.response?.status;
+
+  // Javob umuman kelmadi: internet yo'q, DNS/CORS, yoki server o'chgan.
+  if (error?.response === undefined) {
+    return "Serverga ulanib bo'lmadi. Internet aloqangizni tekshirib, qayta urinib ko'ring.";
+  }
+
+  if (status !== undefined && status >= 500) {
+    return "Serverda vaqtinchalik xatolik. Birozdan so'ng qayta urinib ko'ring.";
+  }
+
+  const raw = error?.response?.data?.message;
+  // NestJS ValidationPipe xabarni MASSIV qilib qaytaradi — birinchisini olamiz,
+  // aks holda ekranda vergul bilan yopishgan matn chiqadi.
+  const message = Array.isArray(raw) ? raw[0] : raw;
+
+  if (typeof message === "string" && message.trim()) return message;
+  if (typeof error?.message === "string" && error.message.trim()) return error.message;
+  return "Login xatosi yuz berdi. Qayta urinib ko'ring.";
+}
+
 export default function Login() {
   const router = useRouter();
 
@@ -75,17 +106,7 @@ export default function Login() {
       }
     } catch (error: any) {
       console.error("Login error:", error);
-
-      // Xato turini tekshirib, string ga o'tkazish
-      if (error?.response?.data?.message) {
-        setMsg(error.response.data.message); // API dan kelgan xabar
-      } else if (error?.message) {
-        setMsg(error.message); // JS Error xabari
-      } else if (typeof error === "string") {
-        setMsg(error); // oddiy string
-      } else {
-        setMsg("Login xatosi yuz berdi. Qayta urinib ko'ring.");
-      }
+      setMsg(loginErrorMessage(error));
     } finally {
       setLoading(false);
     }
